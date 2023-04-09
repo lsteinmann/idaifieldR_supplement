@@ -3,8 +3,13 @@ title: "R wie in: Reproduzierbar -- Auswertung von Daten aus Field Desktop mit i
 author: "Lisa Steinmann"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
+  html_document:
+    highlight: breezedark
+    fig_width: 12
+    link-citations: yes
+    theme: paper
     toc: yes
+    number_sections: yes
   officedown::rdocx_document:
     fig_width: 6
     plots:
@@ -16,15 +21,10 @@ output:
         sep: ': '
     mapstyles:
       Normal: First Paragraph
-  html_document:
-    highlight: breezedark
-    fig_width: 12
-    link-citations: yes
-    theme: paper
+  pdf_document:
     toc: yes
-    number_sections: yes
-bibliography: references.bib
-csl: "deutsches-archaologisches-institut.csl"
+bibliography: "../data/references.bib"
+csl: "../data/deutsches-archaologisches-institut.csl"
 ---
 
 ```{r setup, include=FALSE}
@@ -57,7 +57,7 @@ R ist eine Skriptsprache, und lässt sich in einem geeigneten Programm Zeile fü
 
 [^2]: [@carlsonQuantitativeMethodsArchaeology2017]
 
-Es ist nicht überraschend, dass die meisten Hilfestellungen und Projekte nicht auf gedrucktem Papier, sondern vornehmlich in digitaler Form zu finden sind: Besonders das von Ben Marwick herausgegebene "How To Do Archaeological Science Using R" (2017-ongoing)[^3] bündelt viele Anleitungen und Tipps, und der von selbigem zusammengestellte "Cran Task View: Archaeology"[^4] gibt Interessierten schnell zahlreiche Hinweise auf die Möglichkeiten von R und die Bandbreite an archäologischen Projekten, die R verwenden. Marwick setzt sich öffentlichkeitswirksam für die weitere Verbreitung von R und reproduzierbarer Methodik in der Archäologie ein. In einem 2017 erschienenen Artikel demonstriert er die Arbeitsweise und ihre Vorteile anhand einer Fallstudie[^5]. Besonders in der deutschsprachigen Archäologie sind die Arbeitsgemeinschaft [Initiative for Statistical Analysis in Archaeology in Kiel (ISAAK)](https://isaakiel.github.io/)[^6] und ihre Mitglieder nennenswert, die bereits seit 2016 Workshops anbieten und R-Pakete sowie Tools in anderen Programmiersprachen entwickeln.
+Es ist nicht überraschend, dass die meisten Hilfestellungen und Projekte nicht auf gedrucktem Papier, sondern vornehmlich in digitaler Form zu finden sind: Besonders das von Ben Marwick herausgegebene "[How To Do Archaeological Science Using R](https://benmarwick.github.io/How-To-Do-Archaeological-Science-Using-R/index.html)" (2017-ongoing)[^3] bündelt viele Anleitungen und Tipps, und der von selbigem zusammengestellte "[Cran Task View: Archaeology](https://github.com/benmarwick/ctv-archaeology)"[^4] gibt Interessierten schnell zahlreiche Hinweise auf die Möglichkeiten von R und die Bandbreite an archäologischen Projekten, die R verwenden. Marwick setzt sich öffentlichkeitswirksam für die weitere Verbreitung von R und reproduzierbarer Methodik in der Archäologie ein. In einem 2017 erschienenen Artikel demonstriert er die Arbeitsweise und ihre Vorteile anhand einer Fallstudie[^5]. Besonders in der deutschsprachigen Archäologie sind die Arbeitsgemeinschaft [Initiative for Statistical Analysis in Archaeology in Kiel (ISAAK)](https://isaakiel.github.io/)[^6] und ihre Mitglieder nennenswert, die bereits seit 2016 Workshops anbieten und R-Pakete sowie Tools in anderen Programmiersprachen entwickeln.
 
 [^3]: [@marwickHowArchaeologicalScience2017]
 
@@ -71,14 +71,7 @@ Als ein Hub für archäologische Projekte und Publikationen, in denen die Verwen
 
 [^7]: <https://sslarch.github.io/>
 
-[^8]: Die Online-Plattform GitHub ist ein weiteres Rad im Getriebe der
-    Reproduzierbarkeit. Obwohl ursprünglich als Versionsverwaltung für
-    Software entstanden, eignen sich git und GitHub als Schnittstelle für
-    kollaborative Projekte sowohl in der Bereitstellung von Daten, als
-    auch der Entwicklung von Tools. Viele Autor\*innen sind dazu
-    übergegangen die Daten und Auswertungsskripte ihrer Artikel oder
-    Projekte auf GitHub oder in Forschungsdatenrepositorien zur Verfügung
-    zu stellen.
+[^8]: Die Online-Plattform GitHub ist ein weiteres Rad im Getriebe der Reproduzierbarkeit. Obwohl ursprünglich als Versionsverwaltung für Software entstanden, eignen sich git und GitHub als Schnittstelle für kollaborative Projekte sowohl in der Bereitstellung von Daten, als auch der Entwicklung von Tools. Viele Autor\*innen sind dazu übergegangen die Daten und Auswertungsskripte ihrer Artikel oder Projekte auf GitHub oder in Forschungsdatenrepositorien zur Verfügung zu stellen.
 
 [^9]: So bspw. (aber nicht ausschließlich): [@schmidEstimatingHumanMobility2023] (<https://github.com/nevrome>) und [@hinzSensitivityRadiocarbonSum2020] (<https://github.com/MartinHinz>).
 
@@ -94,8 +87,7 @@ Das Ziel von idaifieldR ist es, diesen Schritt zu eliminieren und die Auswertung
 
 idaifieldR greift aus R heraus auf den CouchDB-Server, den Field Desktop als Hintergrund verwendet, zu. Der direkte Import aus der hintergründigen Datenbank bringt jedoch einige Probleme mit sich: Die Daten -- ursprünglich im JSON-Format, das vielen sicher aus der Verwaltung der Projektkonfigurationen bis zur dritten Version von iDAI.field bekannt ist[^10] -- werden als sog. Liste nach R importiert. Neben dem Import enthält idaifieldR Funktionen, mit denen sich die Daten etwas formatieren und bereinigen lassen, um die Weiterarbeit mit R zu vereinfachen.
 
-[^10]: Zur Erläuterung des Aufbaus der Projektkonfigurationen siehe bspw.
-    in dieser Zeitschrift: [@hamelVomFeldDatenbank2022]
+[^10]: Zur Erläuterung des Aufbaus der Projektkonfigurationen siehe bspw. in dieser Zeitschrift: [@hamelVomFeldDatenbank2022]
 
 Im Folgenden soll der Workflow mit idaifieldR kurz anhand einiger weniger Beispiele aus Milet veranschaulicht werden. Für die Demonstration wird idaifieldR in der Version 0.3.2 verwendet, die [auf GitHub erhältlich](https://github.com/lsteinmann/idaifieldR) ist. Leser\*innen, die bisher noch keine Erfahrung mit R haben, wird empfohlen zunächst R und RStudio zu installieren und sich einige Grundlagen der Sprache anzueignen. Als Hilfestellung sind bspw. die [Screencasts von ISAAKiel](https://isaakiel.github.io/screencasts.html)[^11] oder das Buch „[YaRrr! The Pirate's Guide to R](https://bookdown.org/ndphillips/YaRrr/)"[^12] empfehlenswert. Im Supplement zu diesem Artikel befindet sich eine detaillierte Einführung in das Paket idaifieldR, die auch die Installation des Paketes und viele der verfügbaren Funktionen und ihrer Optionen abdeckt.
 
@@ -103,7 +95,9 @@ Im Folgenden soll der Workflow mit idaifieldR kurz anhand einiger weniger Beispi
 
 [^12]: [@phillips_YaRrrPirateGuide_2018]
 
-Die Datei aus der dieser Artikel generiert wurde ist ein RMarkdown-Bericht. Dieses Format erlaubt es in R Text und Auswertung in einer Datei zu kombinieren, sodass ein gesamter Artikel nach Aktualisierung des Datenbestandes bspw. erneut generiert werden kann. Die RMarkdown-Datei für diesen Teil des Artikels ist im Supplement beigefügt. Für alle Plots werden im Artikel nur die nötigsten Zeilen angegeben, während die nähere Gestaltung im Hintergrund passiert. Sie kann im Supplement nachgelesen werden.
+Die Datei aus der dieser Artikel generiert wurde ist ein RMarkdown-Bericht. Dieses Format erlaubt es in R Text und Auswertung in einer Datei zu kombinieren, sodass ein gesamter Artikel nach Aktualisierung des Datenbestandes bspw. erneut generiert werden kann. Die RMarkdown-Datei, aus der dieser Artikel entstanden ist, ist im Supplement beigefügt[^13]. Für alle Plots werden im Artikel nur die nötigsten Zeilen angegeben, während die nähere Gestaltung im Hintergrund passiert. Sie kann im Supplement nachgelesen werden.
+
+[^13]: Als ironischer Twist werden nach den einführenden Worten zu Reproduzierbarkeit die für die Diagramme im Artikel verwendeten Daten im Supplement nicht mitgeliefert. In diesem Fall ist die unmittelbare Vorlage der Rohdaten leider (noch!) nicht möglich, aber im Rahmen einer revidierten Version meiner Dissertation ([@steinmann_DionysosheiligtumSakrallandschaftMilet_2023]) geplant.
 
 ## Importieren der nötigen Daten
 
@@ -140,11 +134,11 @@ Genauere Informationen zu diesem Prozess sind in der Dokumentation sowie in dem 
 
 ## Das Areal "Michaelskirche"
 
-Im Ort "MK_Michaelskirche" sind alle Schnitte enthalten, die im Areal der Michaelskirche bzw. des Dionysostempels angelegt wurden. Hier wurde erstmals unter Theodor Wiegand am Beginn des 20. Jh. gearbeitet. Die Funde in der Datenbank stammen jedoch aus den Grabungen von Wolfgang Müller-Wiener, die er 1973--1977 durchgeführt hat[^13]. Sie wurden zwischen 2017 und 2020 von der Verfasserin dieses Artikels im Rahmen ihrer Dissertation aufgenommen[^14].
+Im Ort "MK_Michaelskirche" sind alle Schnitte enthalten, die im Areal der Michaelskirche bzw. des Dionysostempels angelegt wurden. Hier wurde erstmals unter Theodor Wiegand am Beginn des 20. Jh. gearbeitet. Die Funde in der Datenbank stammen jedoch aus den Grabungen von Wolfgang Müller-Wiener, die er 1973--1977 durchgeführt hat[^14]. Sie wurden zwischen 2017 und 2020 von der Verfasserin dieses Artikels im Rahmen ihrer Dissertation aufgenommen[^15].
 
-[^13]: [@muller-wienerMilet197319751977b]
+[^14]: [@muller-wiener_Milet1977Arbeiten_1979]
 
-[^14]: [@steinmann_DionysosheiligtumSakrallandschaftMilet_2023]; Die Funde wurden vor dem Umstieg der Grabung auf iDAI.field 2 bzw. 3 bearbeitet, weswegen der Import derzeit noch läuft und nicht alle Formulare vollständig ausgefüllt sind. Dennoch ist der Datenbestand geeignet, um ein paar Möglichkeiten der Auswertung mit R zu demonstrieren.
+[^15]: [@steinmann_DionysosheiligtumSakrallandschaftMilet_2023]; Die Funde wurden vor dem Umstieg der Grabung auf iDAI.field 2 bzw. 3 bearbeitet, weswegen der Import derzeit noch läuft und nicht alle Formulare vollständig ausgefüllt sind. Dennoch ist der Datenbestand geeignet, um ein paar Möglichkeiten der Auswertung mit R zu demonstrieren.
 
 Schnell können wir uns einen Eindruck davon verschaffen, wie viele Funde aus den Schnitten im Areal der Michaelskirche in unserer Datenbank existieren. Dafür benutzen wir die Pakete [ggplot2](https://ggplot2.tidyverse.org/) und [forcats](https://forcats.tidyverse.org/), die uns ansprechendere Graphiken und eine einfachere Datensortierung erlauben:
 
@@ -185,9 +179,9 @@ p +
         panel.grid.minor.y = gridline("gray90"))
 ```
 
-Neben Schwarzfirniskeramik, die einen auffällig großen Teil des gesamten Spektrums ausmacht, sehen wir eine eher geringe Menge von schwarz- und rotfiguriger Keramik. Die beiden Gattungen wurden bereits 2016 von Norbert Kunisch vollständig veröffentlicht, und die Datensätze geben seine Einschätzungen zu diesen Objekten wider[^15]. Da von ihm publizierte Objekte unter ihrer Katalognummer abgelegt wurden, können wir den Datenbestand schnell dahingehend filtern und uns ein Diagramm der einzelnen Datierungsspannen ausgeben lassen:
+Neben Schwarzfirniskeramik, die einen auffällig großen Teil des gesamten Spektrums ausmacht, sehen wir eine eher geringe Menge von schwarz- und rotfiguriger Keramik. Die beiden Gattungen wurden bereits 2016 von Norbert Kunisch vollständig veröffentlicht, und die Datensätze geben seine Einschätzungen zu diesen Objekten wider[^16]. Da von ihm publizierte Objekte unter ihrer Katalognummer abgelegt wurden, können wir den Datenbestand schnell dahingehend filtern und uns ein Diagramm der einzelnen Datierungsspannen ausgeben lassen:
 
-[^15]: [@kunischFundeAusMilet2016]
+[^16]: [@kunischFundeAusMilet2016]
 
 ```{r }
 to_filter <- c("Schwarzfigurige Keramik", "Rotfigurige Keramik")
