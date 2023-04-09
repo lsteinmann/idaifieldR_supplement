@@ -2,5 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
-idaifieldR_artikel.docx
-idaifieldR_tutorial.html
+
+
+*.docx
+*.html
+*.pdf
+*.log

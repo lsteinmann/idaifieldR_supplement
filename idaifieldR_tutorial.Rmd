@@ -3,12 +3,20 @@ title: "Tutorial zu idaifieldR"
 author: "Lisa Steinmann"
 date: "`r Sys.Date()`"
 output:
-  html_document: default
+  html_document:
+    highlight: breezedark
+    fig_width: 12
+    link-citations: yes
+    theme: paper
+    toc: yes
+    number_sections: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.width = 12, fig.height = 10)
+knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Das Paket 'idaifieldR'
 
 idaifieldR importiert Daten aus der [iDAI.field 2 / Field Desktop](https://github.com/dainst/idai-field)-Datenbank in R. Die Kernfunktionen dieses Pakets verbinden sich mit einem laufenden iDAI.field 2 oder 3 Client über dessen API und speichern die gesamte Projektdatenbank oder eine Teilmenge als ein Listen-Objekt in R, wodurch der sonst notwendige csv-Export vermieden wird. Jedes R-Skript, das idaifieldR zum Importieren der Datenbank verwendet, kann erneut ausgeführt und flexibel mit neuen Daten aktualisiert werden, ohne dass ein Export aus dem Field-Client selbst erforderlich ist. Zur Verwendung ist es jedoch erforderlich, dass Field Desktop geöffnet ist.
 
@@ -30,9 +38,11 @@ library(idaifieldR)
 ```
 
 
-## Mit der Datenbank verbinden
+# Die Vorbereitung: Verbindung und Index
 
 Um diesem Tutorial direkt mit denselben Daten zu folgen, können wir das Projekt-Backup namens "rtest.json" aus dem "data"-Ordner in diesem Supplement in ein neues Projekt namens 'rtest' in unserem Field Client laden. Dieser Test-Datensatz verwendet eine sehr leicht angepasste Projektkonfiguration, um die relevanten Funktionen von `idaifieldR` zu demonstrieren.
+
+## Mit der Datenbank verbinden
 
 Unser erster Schritt besteht darin ein Verbindungsobjekt zu erstellen, das alle Informationen enthält, die R benötigt, um sich mit dem Field Desktop-Datenbankserver zu verbinden:
 
@@ -91,6 +101,8 @@ Weitere Informationen:
 ?get_field_index
 ```
 
+## Visueller Überblick
+
 Wir können unseren ersten Plot aus dem Index erstellen, der uns einen sehr allgemeinen Überblick über unsere Daten gibt. Verwenden wir dazu die `%>%`-Funktion von `dplyr` (den sog. Pipe-Operator) sowie `ggplot2`:
 
 ```{r message = FALSE, warning = FALSE}
@@ -104,9 +116,9 @@ index %>%
 
 Wir können sehen, dass die Daten eine Vielzahl von Funden umfassen, die in verschiedenen "Layern" und "Trenches" aufgenommen wurden. Um an genauere Informationen heranzukommen und einige nützlichere Diagramme zu erstellen, werden wir nun unsere den eigentlichen Datenbestand importieren. 
 
-## Import der Datensätze
+# Der Import von Datensätzen
 
-Wir können die vollständige "rtest"-Datensatz in R importieren, indem wir die Funktion `get_idaifield_docs()` mit dem Verbindungsobjekt namens `conn` verwenden, das wir zuvor erstellt haben:
+Wir können die vollständige "rtest"-Projektdatenbank in R importieren, indem wir die Funktion `get_idaifield_docs()` mit dem Verbindungsobjekt namens `conn` verwenden, das wir zuvor erstellt haben:
 
 ```{r }
 idaifield_test_docs <- get_idaifield_docs(connection = conn)
@@ -118,7 +130,11 @@ Auch hier lohnt sich ein Blick in die Dokumentation:
 ?get_idaifield_docs
 ```
 
-Mit dieser Funktion werden jedoch **alle** existenten Datensätze importiert. Dies ist nicht unbedingt sinnvoll, da es gerade bei großen Datenbanken lange dauern und viel Speicherplatz aufbrauchen kann. `idaifieldR` enthält zwei Funktionen, anhand derer eine Teilmenge aus der Datenbank abgefragt werden kann: 
+Mit dieser Funktion werden jedoch **alle** existenten Datensätze importiert. Dies ist nicht unbedingt sinnvoll, da es gerade bei großen Datenbanken lange dauern und viel Speicherplatz aufbrauchen kann. 
+
+## Queries
+
+`idaifieldR` enthält zwei Funktionen, anhand derer eine Teilmenge aus der Datenbank abgefragt werden kann: 
 
 ```{r eval = FALSE}
 ?idf_query
@@ -132,6 +148,8 @@ pottery <- idf_query(conn, field = "category", value = "Pottery")
 ```
 In RStudio können wir uns das Ergebnis mit `View(idaifield_test_docs)` bzw. `View(pottery)` oder durch Klicken auf die Liste im Environment-Fenster ansehen. Es handelt sich um eine benannte verschachtelte Liste der Klasse `idaifield_docs`, die ein Element für jede *resource* in der Datenbank enthält und die ursprüngliche `JSON`-Struktur widerspiegelt. Der Name jeder Liste ist der Kurzbezeichner (*identifier*) der zugehörigen *resource*. Die verschachtelte Liste `doc$resource` enthält den eigentlichen Datensätz für jede *resource*, während die anderen zugehörigen Listen Informationen über die an jeder *resource* vorgenommenen Änderungen zusammen mit ihren Basisdaten wie der *UUID* enthalten, die Field Desktop intern als eindeutigen Namen jedes Datensatzes verwendet. Wir können diese Liste verwenden, um Änderungen an Datenbankeinträgen auf einer Zeitachse, sortiert nach Benutzer*innen usw., zu visualisieren.
 
+## Rohdaten und Resourcen
+
 Obwohl es für die weitere Verarbeitung nicht notwendig ist, können wir `idaifieldR`s `check_and_unnest()`-Funktion (siehe `?check_and_unnest()`) verwenden, um die Liste auf die Ressourcenebene zu reduzieren:
 
 ```{r }
@@ -139,6 +157,8 @@ pottery <- check_and_unnest(pottery)
 ```
 
 Wir sehen, dass es sich jetzt um ein *idaifield_resources*-Objekt handelt und weniger Speicherplatz benötigt. Wenn wir das Objekt mit `View(pottery)` in RStudio ansehen, zeigt sich, dass es nur die Informationen der einzelnen Datensätze enthält, d.h. die tatsächlichen Daten, die wir in Field Desktop eingegeben haben. Dieser Schritt kann automatisch von den internen `idaifieldR`-Funktionen durchgeführt werden. 
+
+## Filtern der `idaifield_...`-Listen
 
 Eine Funktion zum Filtern der gesamten Datenbank bietet das Paket mit `idf_select_by()`:
 
@@ -154,7 +174,7 @@ pottery <- idf_select_by(idaifield_test_docs, by = "category", value = "Pottery"
 
 Allerdings sind die oben genannten *query*-Funktionen gerade für größere Projektdatenbanken wirklich empfehlenswerter. Dennoch kann `idf_select_by()` auch verwendet werden, um diese Importe nochmals zu filtern. 
 
-## Vereinfachen der Liste
+# Erweiterte Bearbeitung: Vereinfachen der Liste
 
 Beim Durchsuchen der Liste ist uns vielleicht aufgefallen, dass sie weiterhin oftmals verschachtelt ist (bspw. *geometry*, *dating*, oder alle Einträge, die im Formular mehr als einen Wert elauben), und außerdem in den Beziehungsangaben (*relations*) weiterhin die *UUID*s statt den Kurzbezeichnern (*identifier*) enthält. Dies können wir mit der Funktion `simplify_idaifield()` vereinfachen. Schauen wir uns zunächst die Dokumentation an:
 
@@ -167,6 +187,10 @@ Meistens sollte es ausreichen, die Voreinstellungen zu verwenden und nur die imp
 ```{r }
 pottery_simple <- simplify_idaifield(pottery, uidlist = index)
 ```
+
+
+## Optionen von `simplify_idaifield()`
+
 Dies übernimmt die Standardeinstellungen für die Funktion. Um zu verstehen, welche Konsequenzen das für die Daten hat, sollten wir mehrfach verschiedene Einstellungen ausprobieren. 
 
 ```{r }
@@ -193,17 +217,22 @@ Die Liste hat nun die Klasse `idaifield_simple`. Schauen wir uns die resultieren
 attributes(pottery_simple)
 ```
 
+# Umwandlung in Matrix / data.frame
+
 Um das meiste aus den Daten herausholen zu können ist es empfehlenswert, die Liste selbst zu verwenden und alle Daten nach Bedarf umzuformatieren. Allerdings verfügt `idaifieldR` über eine Funktion, die die Liste in eine Matrix umwandelt. Dies sollte am besten anhand der vereinfachten Listen geschehen (also Listen der Klassse `idaifield_simple`):
 
 ```{r }
 pottery_mat <- idaifield_as_matrix(pottery_simple)
 ```
+
 Die Matrix lässt sich schnell in einen data.frame umwandeln, mit dem Plots einfacher von der Hand gehen. Gleichzeitig können wir die R-Funktion `type.convert()` verwenden, um bspw. numerische Werte automatisch als Zahlen erkennen zu lassen: 
 
 ```{r }
 pottery_df <- as.data.frame(pottery_mat) %>%
   type.convert(as.is = FALSE)
 ```
+
+# Einige Beispiel-Diagramme
 
 Mit dem `pottery_df`-data.frame können wir nun einige einfache Diagramme erstellen: 
 
@@ -221,7 +250,7 @@ pottery_df %>%
   geom_bar()
 ```
 
-## Sprachen
+# Sprachen und Übersetzungen
 
 Derzeit gibt es zwei Funktionen, die es erleichtern, die internen Namen von Feldern durch ihre Übersetzungen in verschiedenen Sprachen zu ersetzen:
 
@@ -259,9 +288,9 @@ head(lang_lookup_en) %>%
   knitr::kable()
 ```
 
-## Sonstiges
+# Weitere Funktionen
 
-Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/releases) wurde mit den letzten Versionen erheblich erweitert. Alle Schritte aus `simplify_idaifield()` lassen sich bspw. auch manuell durchführen. Genauere Informationen dazu und zum Vorgang sind in der Dokumentation zu den einzelnen Funktionen enthalten. Abgesehen davon wurden folgende Funktionen in diesem Tutorial zwar nicht erwähnt, lassen sich aber über die Dokumentation hoffentlich erschließen: 
+Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/releases) wurde mit den letzten Versionen erheblich erweitert. Alle Schritte aus `simplify_idaifield()` lassen sich bspw. auch manuell durchführen. Genauere Informationen dazu und zum Vorgang sind in der Dokumentation zu den einzelnen Funktionen enthalten. Abgesehen davon wurden folgende Funktionen in diesem Tutorial zwar nicht erwähnt, lassen sich aber über die Dokumentation erschließen: 
 
 ```{r eval = FALSE}
 ?idf_show_categories
@@ -278,7 +307,7 @@ Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/rele
 ?convert_to_onehot
 ```
 
-## Call for Contributions
+# Call for Contributions
 
 Mit Version 0.3.2 ist das Paket noch immer nicht vollständig fertig für die Veröffentlich in CRAN. Hoffentlich finden sich nach dieser Anleitung weitere Interessierte, die bei der Vorbereitung für die Publikation und außerdem dem Testen des Paketes für verschiedene Projektkonfigurationen und Anwendungszwecke helfen können. 
 
