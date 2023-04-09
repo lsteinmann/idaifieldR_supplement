@@ -271,6 +271,7 @@ Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/rele
 ?remove_config_names
 ?replace_uid
 ?idf_sepdim
+?reformat_geometry
 ?gather_languages
 ?fix_dating
 ?fix_relations
