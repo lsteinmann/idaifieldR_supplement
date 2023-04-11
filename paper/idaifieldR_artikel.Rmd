@@ -45,7 +45,7 @@ PlotTheme <- theme(legend.justification=c(1,1),
 
 ```
 
-Field Desktop (oder: [iDAI.field](https://github.com/dainst/idai-field)) ist der Dokumentations-Datenbankclient für Feldforschungsprojekte des DAI und findet auf zahlreichen Ausgrabungen inner- und außerhalb des DAI Anwendung[^1]. Der Client ermöglicht flexible Projektkonfigurationen bei einer in groben Zügen gleichbleibenden Datenstruktur, und ist damit für die unterschiedlichsten archäologischen Projekte geeignet. Der wahre Nutzen von Datenbanken besteht in den Möglichkeiten ihrer Auswertung. Die Stärke einer Datenbank ist es zwar auch, aber nicht nur, das traditionelle, individuelle Notizbuch in eine digitale und kollaborative Form zu überführen, sondern vor Allem Informationen über einzelne Objekte an einem Ort in einer strukturierten und quantitativ erfassbaren Art und Weise nach festgelegten Standards zu bündeln.
+Field Desktop (oder: [iDAI.field](https://field.idai.world/)) ist der Dokumentations-Datenbankclient für Feldforschungsprojekte des DAI und findet auf zahlreichen Ausgrabungen inner- und außerhalb des DAI Anwendung[^1]. Der Client ermöglicht flexible Projektkonfigurationen bei einer in groben Zügen gleichbleibenden Datenstruktur, und ist damit für die unterschiedlichsten archäologischen Projekte geeignet. Der wahre Nutzen von Datenbanken besteht in den Möglichkeiten ihrer Auswertung. Die Stärke einer Datenbank ist es zwar auch, aber nicht nur, das traditionelle, individuelle Notizbuch in eine digitale und kollaborative Form zu überführen, sondern vor Allem Informationen über einzelne Objekte an einem Ort in einer strukturierten und quantitativ erfassbaren Art und Weise nach festgelegten Standards zu bündeln.
 
 [^1]: An dieser Stelle möchte ich dem Team der *Wissenschaftlichen Softwareentwicklung* des DAI, insbesondere Thomas Kleinke, Simon Hohl, Daniel de Oliveira und Juliane Watson, für die immer freundliche Kommunikation und den ausgezeichneten Support danken!
 
@@ -115,7 +115,7 @@ index <- get_field_index(conn, verbose = TRUE, gather_trenches = TRUE)
 
 Eine *resource* ist ein einzelner Datensatz. Jedes ausgefüllte Formular wird als *resource* gespeichert. Jede *resource* hat eine Kategorie (*category*), die der Art des Formulares entspricht, einen Kurzbezeichner (*identifier*) und eine UUID (im Index: *UID*). Die UUIDs werden in der Datenbank im Hintergrund als Namen einer jeden *resource* verwendet, da sie immer einzigartig sind. Wir können den Index verwenden, um im Folgenden die Datenbank zu filtern oder uns zu helfen, spezielle Anfragen an die Datenbank zu senden. Näheres ist in dem Tutorial zur Verwendung von idaifieldR zu finden, das Teil des Supplementes zu diesem Artikel ist.
 
-Als nächstes importieren wir alle Datensätze aus dem Areal der Michaelskirche aus dem milesischen Datenbankprojekt. In der Struktur der unserer Field-Datenbank benutzen wir die Resource "Ort" als Behältnis für zusammengehörige Schnitte, weswegen wir unseren *query* entsprechend gestalten können:
+Als nächstes importieren wir alle Datensätze aus dem Areal der [Michaelskirche](https://arachne.dainst.org/entity/6525406) aus dem milesischen Datenbankprojekt. In der Struktur der unserer Field-Datenbank benutzen wir die Resource "Ort" als Behältnis für zusammengehörige Schnitte, weswegen wir unseren *query* entsprechend gestalten können:
 
 ```{r }
 mk_raw <- idf_index_query(conn, uidlist = index,
@@ -123,7 +123,7 @@ mk_raw <- idf_index_query(conn, uidlist = index,
                           value = "MK_Michaelskirche")
 ```
 
-Hiermit haben wir nun alle Datensätze aus dem Bereich der Michaelskirche in R zu unserer freien Verfügung. Im Folgenden nehmen wir für viele Schritte das R-Paket [dplyr](https://dplyr.tidyverse.org/) zuhilfe, das die Formatierung und Selektion von Daten erheblich vereinfacht. Wir können die Funktionen von idaifieldR mit dem sog. *Pipe-Operator* aus `dplyr` (und anderen Paketen) benutzen, um die Daten etwas aufzubereiten und leichter nutzbar zu machen:
+Hiermit haben wir nun alle Datensätze aus dem Bereich der [Michaelskirche](https://arachne.dainst.org/entity/6525406) in R zu unserer freien Verfügung. Im Folgenden nehmen wir für viele Schritte das R-Paket [dplyr](https://dplyr.tidyverse.org/) zuhilfe, das die Formatierung und Selektion von Daten erheblich vereinfacht. Wir können die Funktionen von idaifieldR mit dem sog. *Pipe-Operator* aus `dplyr` (und anderen Paketen) benutzen, um die Daten etwas aufzubereiten und leichter nutzbar zu machen:
 
 ```{r }
 library(dplyr)
@@ -138,7 +138,7 @@ Genauere Informationen zu diesem Prozess sind in der Dokumentation sowie in dem 
 
 ## Das Areal "Michaelskirche"
 
-Im Ort "MK_Michaelskirche" sind alle Schnitte enthalten, die im Areal der Michaelskirche bzw. des Dionysostempels angelegt wurden. Hier wurde erstmals unter Theodor Wiegand am Beginn des 20. Jh. gearbeitet. Die Funde in der Datenbank stammen jedoch aus den Grabungen von Wolfgang Müller-Wiener, die er 1973--1977 durchgeführt hat[^16]. Sie wurden zwischen 2017 und 2020 von der Verfasserin dieses Artikels im Rahmen ihrer Dissertation aufgenommen[^17].
+Im Ort "MK_Michaelskirche" sind alle Schnitte enthalten, die im Areal der [Michaelskirche](https://arachne.dainst.org/entity/6525406) bzw. des [Dionysostempels](https://arachne.dainst.org/entity/6349) angelegt wurden. Hier wurde erstmals unter Theodor Wiegand am Beginn des 20. Jh. gearbeitet. Die Funde in der Datenbank stammen jedoch aus den Grabungen von Wolfgang Müller-Wiener, die er 1973--1977 durchgeführt hat[^16]. Sie wurden zwischen 2017 und 2020 von der Verfasserin dieses Artikels im Rahmen ihrer Dissertation aufgenommen[^17].
 
 [^16]: [@muller-wiener_Milet1977Arbeiten_1979]
 
@@ -183,7 +183,7 @@ p +
         panel.grid.minor.y = gridline("gray90"))
 ```
 
-Neben Schwarzfirniskeramik, die einen auffällig großen Teil des gesamten Spektrums ausmacht, sehen wir eine eher geringe Menge von schwarz- und rotfiguriger Keramik. Die beiden Gattungen wurden bereits 2016 von [Norbert Kunisch vollständig veröffentlicht](https://zenon.dainst.org/Record/001471948), und die Datensätze geben seine Einschätzungen zu diesen Objekten wider[^18]. Da von ihm publizierte Objekte im Datensatz entsprechend markiert wurden, können wir den Datenbestand schnell dahingehend filtern und uns ein Diagramm der einzelnen Datierungsspannen ausgeben lassen:
+Neben [Schwarzfirniskeramik](http://thesauri.dainst.org/de/concepts/_1b2c82c9.html), die einen auffällig großen Teil des gesamten Spektrums ausmacht, sehen wir eine eher geringe Menge von [schwarz](http://thesauri.dainst.org/de/concepts/_11bdebc6.html)- und [rotfiguriger](http://thesauri.dainst.org/de/concepts/_d1e3c38b.html) Keramik. Die beiden Gattungen wurden bereits 2016 von [Norbert Kunisch vollständig veröffentlicht](https://zenon.dainst.org/Record/001471948), und die Datensätze geben seine Einschätzungen zu diesen Objekten wider[^18]. Da von ihm publizierte Objekte im Datensatz entsprechend markiert wurden, können wir den Datenbestand schnell dahingehend filtern und uns ein Diagramm der einzelnen Datierungsspannen ausgeben lassen:
 
 [^18]: [@kunischFundeAusMilet2016]
 
@@ -207,7 +207,7 @@ p +
   PlotTheme
 ```
 
-Es lässt sich schnell beobachten, dass unter den wenigen Fragmenten schwarz- und rotfiguriger Keramik im Areal der Michaelskirche ein Großteil in das 5. Jh. v. d. Z. datiert wurde. Sollten in Zukunft neue Fragmente hinzukommen, oder sich die Datierung ändern, ließe sich dieses Diagramm zusammen mit dem gesamten Bericht auf Knopfdruck aus den Daten in Field Desktop neu generieren.
+Es lässt sich schnell beobachten, dass unter den wenigen Fragmenten schwarz- und rotfiguriger Keramik im Areal der Michaelskirche ein Großteil in das 5. Jahrhundert v. Chr. datiert wurde. Sollten in Zukunft neue Fragmente hinzukommen, oder sich die Datierung ändern, ließe sich dieses Diagramm zusammen mit dem gesamten Bericht auf Knopfdruck aus den Daten in Field Desktop neu generieren.
 
 Bei Bedarf kann der gesamte Datensatz oder eine Auswahl bspw. als csv-Tabelle oder in anderen Formaten gespeichert zur Verfügung gestellt werden:
 
