@@ -23,8 +23,8 @@ output:
       Normal: First Paragraph
   pdf_document:
     toc: yes
-bibliography: "../data/references.bib"
-csl: "../data/deutsches-archaologisches-institut.csl"
+bibliography: "../mat/references.bib"
+csl: "../mat/deutsches-archaologisches-institut.csl"
 ---
 
 ```{r setup, include=FALSE}
