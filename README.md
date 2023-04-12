@@ -12,3 +12,5 @@ Supplement (und Text) zum Artikel: "R wie in: Reproduzierbar -- Auswertung von D
   journal = {Forum für digitale Archäologie und Infrastruktur},
 }
 ```
+
+![](figures/Abb_1_idaifieldR.png)

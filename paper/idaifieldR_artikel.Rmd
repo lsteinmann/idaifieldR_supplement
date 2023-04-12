@@ -10,6 +10,7 @@ output:
     theme: paper
     toc: yes
     number_sections: yes
+    css: "../mat/style.css"
   officedown::rdocx_document:
     fig_width: 6
     plots:
@@ -113,7 +114,10 @@ conn <- connect_idaifield(pwd = "passwort", project = "milet")
 index <- get_field_index(conn, verbose = TRUE, gather_trenches = TRUE)
 ```
 
-Eine *resource* ist ein einzelner Datensatz. Jedes ausgefüllte Formular wird als *resource* gespeichert. Jede *resource* hat eine Kategorie (*category*), die der Art des Formulares entspricht, einen Kurzbezeichner (*identifier*) und eine UUID (im Index: *UID*). Die UUIDs werden in der Datenbank im Hintergrund als Namen einer jeden *resource* verwendet, da sie immer einzigartig sind. Wir können den Index verwenden, um im Folgenden die Datenbank zu filtern oder uns zu helfen, spezielle Anfragen an die Datenbank zu senden. Näheres ist in dem Tutorial zur Verwendung von idaifieldR zu finden, das Teil des Supplementes zu diesem Artikel ist.
+Eine *resource* ist ein einzelner Datensatz. Jedes ausgefüllte Formular wird als *resource* gespeichert. Jede *resource* hat eine Kategorie (*category*), die der Art des Formulares entspricht, einen Bezeichner (*identifier*) und eine UUID (im Index: *UID*). Die UUIDs werden in der Datenbank im Hintergrund als Namen einer jeden *resource* verwendet, da sie immer einzigartig sind. Wir können den Index verwenden, um im Folgenden die Datenbank zu filtern oder uns zu helfen, spezielle Anfragen an die Datenbank zu senden. Näheres ist in dem Tutorial zur Verwendung von idaifieldR zu finden, das Teil des Supplementes zu diesem Artikel ist.
+
+![Abb. 2: Ansicht der Schnitte im "Ort" MK_Michaelskirche in Field Desktop](../figures/Abb_2_Screenshot_Field_MK.png)
+
 
 Als nächstes importieren wir alle Datensätze aus dem Areal der [Michaelskirche](https://arachne.dainst.org/entity/6525406) aus dem milesischen Datenbankprojekt. In der Struktur der unserer Field-Datenbank benutzen wir die Resource "Ort" als Behältnis für zusammengehörige Schnitte, weswegen wir unseren *query* entsprechend gestalten können:
 
