@@ -48,6 +48,7 @@ PlotTheme <- theme(legend.justification=c(1,1),
 
 Field Desktop (oder: [iDAI.field](https://field.idai.world/)) ist der Dokumentations-Datenbankclient für Feldforschungsprojekte des DAI und findet auf zahlreichen Ausgrabungen inner- und außerhalb des DAI Anwendung[^1]. Der Client ermöglicht flexible Projektkonfigurationen bei einer in groben Zügen gleichbleibenden Datenstruktur, und ist damit für die unterschiedlichsten archäologischen Projekte geeignet. Der wahre Nutzen von Datenbanken besteht in den Möglichkeiten ihrer Auswertung. Die Stärke einer Datenbank ist es zwar auch, aber nicht nur, das traditionelle, individuelle Notizbuch in eine digitale und kollaborative Form zu überführen, sondern vor Allem Informationen über einzelne Objekte an einem Ort in einer strukturierten und quantitativ erfassbaren Art und Weise nach festgelegten Standards zu bündeln.
 
+
 [^1]: An dieser Stelle möchte ich dem Team der *Wissenschaftlichen Softwareentwicklung* des DAI, insbesondere Thomas Kleinke, Simon Hohl, Daniel de Oliveira und Juliane Watson, für die immer freundliche Kommunikation und den ausgezeichneten Support danken!
 
 Field Desktop erlaubt mit dem geordneten Export der Daten in csv-Tabellen bereits die vermutlich häufigste Form der Datenauswertung: Das Erstellen von Diagrammen aus Exporten in Tabellenverarbeitungsprogrammen und anderer statistischer Software, wie bspw. SPSS oder PAST. Ein zentraler Kritikpunkt an diesen Programmen ist jedoch ihr inhärenter Status als "black box" und damit einhergehend die Schwierigkeiten, mit ihnen hergestellte Graphiken oder Analysen zu reproduzieren, da ein großer Teil der Arbeit nach dem Export aus dem nur schwer dokumentierbaren Auswählen von Zeilen, Spalten und dem Klicken von Buttons besteht[^2]. Die Statistikprogrammiersprache R bietet die Lösung für dieses Problem, und ist bereits seit langer Zeit in vielen Wissenschaften, die regelmäßig mit statistisch auszuwertenden Daten hantieren, bekannt und beliebt.
@@ -157,13 +158,20 @@ p <- mk %>%
   ggplot(aes(x = fct_infreq(relation.isRecordedIn), fill = category)) +
   geom_bar() +
   labs(x = "Schnitt", y = "Anzahl", fill = "Kategorie")
+abbnr <- 3
+caption <- paste0("Abb. ", abbnr, ": Funde in den einzelnen Schnitten im Areal der Michaelskirche" )
 ```
 
-```{r echo = FALSE, fig.cap="Funde in den einzelnen Schnitten im Areal der Michaelskirche"}
-p + scale_fill_viridis_d() +
+```{r echo = FALSE, fig.cap=caption}
+p <- p + scale_fill_viridis_d() +
   theme(panel.grid.major.y = gridline("grey70"),
         panel.grid.minor.y = gridline("grey90")) +
   PlotTheme
+title_s <- "Funde_Schnitte_MK"
+ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".eps"))
+ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".png"))
+p
+
 ```
 
 ## Keramik aus dem Areal der Michaelskirche
@@ -176,15 +184,22 @@ p <- mk %>%
   ggplot(aes(x = fct_infreq(potteryGroup), fill = functionalCategory)) + 
   geom_bar() + 
   labs(x = "Keramikgruppe", y = "Anzahl", fill = "Funktion")
+abbnr <- abbnr + 1
+caption <- paste0("Abb. ", abbnr, ": Keramik nach Funktion und Gruppe aus dem Areal der Michaelskirche")
 ```
 
-```{r echo = FALSE, fig.height=7, fig.cap="Keramik nach Funktion und Gruppe aus dem Areal der Michaelskirche"}
-p + 
+```{r echo = FALSE, fig.height=7, fig.cap=caption}
+p <- p + 
   scale_fill_viridis_d() +
   PlotTheme +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         panel.grid.major.y = gridline("gray70"),
         panel.grid.minor.y = gridline("gray90"))
+
+title_s <- "Ker_Funktion_Gruppe_MK"
+ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".eps"))
+ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".png"))
+p
 ```
 
 Neben [Schwarzfirniskeramik](http://thesauri.dainst.org/de/concepts/_1b2c82c9.html), die einen auffällig großen Teil des gesamten Spektrums ausmacht, sehen wir eine eher geringe Menge von [schwarz](http://thesauri.dainst.org/de/concepts/_11bdebc6.html)- und [rotfiguriger](http://thesauri.dainst.org/de/concepts/_d1e3c38b.html) Keramik. Die beiden Gattungen wurden bereits 2016 von [Norbert Kunisch vollständig veröffentlicht](https://zenon.dainst.org/Record/001471948), und die Datensätze geben seine Einschätzungen zu diesen Objekten wider[^18]. Da von ihm publizierte Objekte im Datensatz entsprechend markiert wurden, können wir den Datenbestand schnell dahingehend filtern und uns ein Diagramm der einzelnen Datierungsspannen ausgeben lassen:
@@ -201,14 +216,22 @@ p <- mk %>%
                      y = fct_reorder(label, -dating.min)), 
                  linewidth = 2) + 
   labs(x = "Datierung", y = "Katalognummer (und Befund)", color = "Keramikgruppe")
+abbnr <- abbnr + 1
+caption <- paste0("Abb. ", abbnr, ": Datierungsspannen schwarz- und rotfiguriger Keramik aus dem Areal der Michaelskirche")
 ```
 
-```{r echo=FALSE, fig.cap="Datierungsspannen schwarz- und rotfiguriger Keramik aus dem Areal der Michaelskirche", fig.height=10}
-p +
+```{r echo=FALSE, fig.cap=caption, fig.height=10}
+p <- p +
   scale_color_manual(values = c("tomato3", "darkslategray")) +
-  theme(panel.grid.major.x = gridline("gray70"),
+  theme(panel.grid.major.y = gridline("gray90"),
+        panel.grid.major.x = gridline("gray70"),
         panel.grid.minor.x = gridline("gray90")) +
   PlotTheme
+
+title_s <- "Datierung_Kunisch_MK"
+ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".eps"))
+ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".png"))
+p
 ```
 
 Es lässt sich schnell beobachten, dass unter den wenigen Fragmenten schwarz- und rotfiguriger Keramik im Areal der Michaelskirche ein Großteil in das 5. Jahrhundert v. Chr. datiert wurde. Sollten in Zukunft neue Fragmente hinzukommen, oder sich die Datierung ändern, ließe sich dieses Diagramm zusammen mit dem gesamten Bericht auf Knopfdruck aus den Daten in Field Desktop neu generieren.
@@ -225,7 +248,7 @@ mk %>%
   write.csv("../data/MK_rf_sf_pottery_Kunisch_2016.csv", fileEncoding = "UTF-8")
 ```
 
-Die Datei enthält aus allen Datensätzen innerhalb des Ortes "MK_Michaelskirche" in der Datenbank der Miletgrabung in denen "[Kunisch 2016](https://zenon.dainst.org/Record/001471948)" als Quelle für die Datierung angegeben ist wenige grundlegende Informationen: den Kurzbezeichner, den Befund und den Schnitt, die Keramikklasse, die Gefäßform sowie die Datierung und die Katalognummer. Die Tabelle ist im Supplement im entsprechenden Ordner enthalten. Über diesen Weg lassen sich schnell größere Datenmengen auswählen, bereinigen oder umformatieren und erneut nach Field Desktop importieren. Gleichzeitig ist die Möglichkeit, gezieltere Anfragen zu stellen und zu exportieren ggf. für die Beigabe in Publikationen -- wie hier demonstriert -- oder regelmäßigen Arbeitsberichten besonders hilfreich. Bisher ist dies über den csv-Export in Field Desktop ohne umständliches Zusammenfügen mehrerer Tabellen nicht möglich.
+Die Datei enthält aus allen Datensätzen innerhalb des Ortes "MK_Michaelskirche" in der Datenbank der Miletgrabung in denen "[Kunisch 2016](https://zenon.dainst.org/Record/001471948)" als Quelle für die Datierung angegeben ist wenige grundlegende Informationen: den Bezeichner, den Befund und den Schnitt, die Keramikklasse, die Gefäßform sowie die Datierung und die Katalognummer. Die Tabelle ist im Supplement im entsprechenden Ordner enthalten. Über diesen Weg lassen sich schnell größere Datenmengen auswählen, bereinigen oder umformatieren und erneut nach Field Desktop importieren. Gleichzeitig ist die Möglichkeit, gezieltere Anfragen zu stellen und zu exportieren ggf. für die Beigabe in Publikationen -- wie hier demonstriert -- oder regelmäßigen Arbeitsberichten besonders hilfreich. Bisher ist dies über den csv-Export in Field Desktop ohne umständliches Zusammenfügen mehrerer Tabellen nicht möglich.
 
 ## Metadaten
 
@@ -240,13 +263,20 @@ p <- date_created %>%
   ggplot(aes(x = date, fill = user)) +
   geom_histogram() + 
   labs(x = "Erstellungsdatum", y = "Anzahl")
+abbnr <- abbnr + 1
+caption <- paste0("Abb. ", abbnr, ": Nutzung des milet-Datenbankprojektes")
 ```
 
-```{r echo = FALSE, fig.cap="Nutzung des milet-Datenbankprojektes"}
-p + scale_fill_viridis_d() + 
+```{r echo = FALSE, fig.cap=caption}
+p <- p + scale_fill_viridis_d() + 
   theme(panel.grid.major.y = gridline("gray70"),
         panel.grid.minor.y = gridline("gray90")) + 
   PlotTheme + theme(legend.position = "none")
+abbnr <- abbnr + 1
+title_s <- "Nutzung_milet_db"
+ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".eps"))
+ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".png"))
+p
 ```
 
 Wie zu erwarten werden die meisten Datensätze während der Grabungssaison in den Sommermonaten angelegt. Auf diesem Level scheint es wie Spielerei, aber der Zugriff auf Metadaten kann beim Lösen von Fragen und Problemen, sowie für Arbeitsberichte durchaus hilfreich sein. So lässt sich auch schnell und ohne Aufwand zusammenfassen, wie viele und welche Arten von Funden im Zeitraum einer Grabungskampagne aufgenommen worden sind.
