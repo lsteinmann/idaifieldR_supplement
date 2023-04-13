@@ -20,15 +20,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Das Paket 'idaifieldR'
 
-idaifieldR importiert Daten aus der [iDAI.field 2 / Field Desktop](https://github.com/dainst/idai-field)-Datenbank in R. Die Kernfunktionen dieses Pakets verbinden sich mit einem laufenden iDAI.field 2 oder 3 Client über dessen API und speichern die gesamte Projektdatenbank oder eine Teilmenge als ein Listen-Objekt in R, wodurch der sonst notwendige csv-Export vermieden wird. Jedes R-Skript, das idaifieldR zum Importieren der Datenbank verwendet, kann erneut ausgeführt und flexibel mit neuen Daten aktualisiert werden, ohne dass ein Export aus dem Field-Client selbst erforderlich ist. Zur Verwendung ist es jedoch erforderlich, dass Field Desktop geöffnet ist.
+idaifieldR importiert Daten aus der [iDAI.field 2 / Field Desktop](https://github.com/dainst/idai-field)-Datenbank in R. Die Kernfunktionen dieses Pakets verbinden sich mit einem laufenden iDAI.field-Client über dessen CouchDB-API und laden die gesamte Projektdatenbank oder eine Teilmenge als ein Listen-Objekt in R, wodurch der sonst notwendige csv-Export vermieden wird. Jedes R-Skript, das idaifieldR zum Importieren der Datenbank verwendet, kann erneut ausgeführt und flexibel mit neuen Daten aktualisiert werden, ohne dass ein Export aus dem Field-Client selbst erforderlich ist. Um idaifieldR verwenden zu können, muss Field Desktop auf dem selben Computer geöffnet oder über ein lokales Netzwerk erreichbar sein.
 
-idaifieldR umfasst Funktionen zum Bereinigen und Formatieren der importierten Listenobjekte für eine einfachere Verarbeitung in R. Mit `simplify_idaifield()` können die UUIDs durch die entsprechenden Bezeichner ersetzt werden, die Geometrie kann so umformatiert werden, dass sie mit R-Paketen für die räumliche Analyse wie [sp](https://cran.r-project.org/web/packages/sp/index.html) verwendet werden kann, eine bevorzugte Sprache für mehrsprachige Eingabefelder kann ausgewählt werden, und vieles mehr. Die gleichzeitige Verarbeitung aller Ressourcen aus der Datenbank kann bei größeren Datenbanken langsam und speicherintensiv sein, und wir nicht empfohlen.
+idaifieldR umfasst Funktionen zum Bereinigen und Formatieren der importierten Listenobjekte für eine einfachere Verarbeitung in R. Hiermit können die *UUID*s durch ihre entsprechenden Bezeichner ersetzt werden, die Geometrie kann so umformatiert werden, dass sie mit R-Paketen für räumliche Analysen, wie bspw. [sp](https://cran.r-project.org/web/packages/sp/index.html), verwendet werden kann, eine bevorzugte Sprache für mehrsprachige Eingabefelder kann ausgewählt werden, und vieles mehr. Die gleichzeitige Verarbeitung aller Ressourcen aus einem Datenbankprojekt kann bei größeren Projekten langsam und speicherintensiv sein, und wird nicht empfohlen.
 
 ## Installation
 
-Nachdem RStudio gestartet wurde muss zunächst idaifieldR als Paket für R installiert werden. Da idaifieldR (noch) nicht auf CRAN verfügbar ist, müssen wir es von GitHub installieren. Wir können entweder die aktuelle Version von der [idaifieldR-GitHub-Seite](https://github.com/lsteinmann/idaifieldR/releases) herunterladen und [aus der Datei installieren](https://riptutorial.com/r/example/5556/install-package-from-local-source), oder, was bequemer ist, das  [remotes](https://cran.r-project.org/web/packages/remotes/) Paket verwenden, um es direkt von GitHub zu installieren:
+Nachdem R (oder RStudio) gestartet wurde, muss zunächst idaifieldR als Paket installiert werden. Wir können entweder die aktuelle Version von der [idaifieldR-GitHub-Seite](https://github.com/lsteinmann/idaifieldR/releases) herunterladen und aus der Datei installieren, oder [remotes](https://cran.r-project.org/web/packages/remotes/) verwenden, um es direkt von GitHub herunterzuladen und zu installieren:
 
 ```{r eval = FALSE}
+# Aus lokaler Datei: 
+install.packages("pfad/zur/datei/idaifieldR_0.3.2.zip")
+# Direkt von GitHub installieren mit 'remotes':
 install.packages("remotes")
 remotes::install_github("lsteinmann/idaifieldR@v0.3.2", build_vignettes = TRUE)
 ```
@@ -39,14 +42,15 @@ remotes::install_github("lsteinmann/idaifieldR@v0.3.2", build_vignettes = TRUE)
 library(idaifieldR)
 ```
 
-
 # Die Vorbereitung: Verbindung und Index
 
-Um diesem Tutorial direkt mit denselben Daten zu folgen, können wir das Projekt-Backup namens "rtest.json" aus dem "data"-Ordner in diesem Supplement in ein neues Projekt namens 'rtest' in unserem Field Client laden. Dieser Test-Datensatz verwendet eine sehr leicht angepasste Projektkonfiguration, um die relevanten Funktionen von `idaifieldR` zu demonstrieren.
+Um diesem Tutorial direkt mit denselben Daten zu folgen, können wir das Projekt-Backup namens "rtest.json" aus dem "data"-Ordner in diesem Supplement in ein neues Projekt namens 'rtest' in unserem Field Client laden. Hierzu klicken wir in Field Desktop im Menü unter "Projekt" auf "Backup einlesen...". Nach einem Klick auf das Ordner-Symbol navigieren wir zum Speicherort von "rtest.json" aus diesem Supplement, und bestätigen die Datei mit "Öffnen". Als Projektkennung geben wir "rtest" ein. (**Achtung**: Nicht versehentlich ein bestehendes Projekt überschreiben!)
+
+Dieser Test-Datensatz verwendet eine sehr leicht angepasste Projektkonfiguration, um die relevanten Funktionen von `idaifieldR` zu demonstrieren. Da in dieser Anleitung kaum projektspezifische Begriffe und Felder verwendet werden, ist es auch leicht möglich, der Anleitung mit einem beliebigen anderen Datenbankprojekt zu folgen.
 
 ## Mit der Datenbank verbinden
 
-Unser erster Schritt besteht darin ein Verbindungsobjekt zu erstellen, das alle Informationen enthält, die R benötigt, um sich mit dem Field Desktop-Datenbankserver zu verbinden:
+Unser erster Schritt besteht darin ein Verbindungsobjekt zu erstellen, mit dessen Hilfe die Funktionen von idaifieldR sich mit der Datenbank verbinden können:
 
 ```{r connection}
 conn <- connect_idaifield(serverip = "127.0.0.1",
@@ -54,13 +58,13 @@ conn <- connect_idaifield(serverip = "127.0.0.1",
                           project = "rtest")
 ```
 
-Die Verbindung zur Datenbank wird hierbei bereits getestet, sodass wir über den Erfolg informiert werden. Wenn Sie Field Desktop auf demselben Computer verwenden, sollten Sie das `serverip`-Argument nicht benötigen, da es standardmäßig auf die gemeinsame localhost-Adresse eingestellt ist. Ersetzen Sie das Passwort durch das, das in Ihrem Field Desktop-Client unter Werkzeuge \> Einstellungen unter 'Eigenes Passwort' eingetragen ist. "project" entspricht dem Namen des Projekts, mit dem Sie arbeiten möchten. Eine Liste der vorhandenen Projekte erhalten Sie entweder mit einem Blick in Field Desktop unter "Projekt" \> "Öffnen..." oder in R mit der Funktion `idf_projects()`:
+Die Verbindung wird hierbei bereits intern mit der Funktion `idf_ping()` getestet, sodass wir mit einer Nachricht über den Erfolg oder Misserfolg informiert werden. Wenn Field Desktop auf dem selben Computer läuft, wird das `serverip`-Argument in der Regel nicht benötigt. Das Passwort (`pwd =`) muss allerdings durch das, das in unserem Field Desktop-Client unter Werkzeuge \> Einstellungen: 'Eigenes Passwort' eingetragen ist, ersetzt werden. Der Wert für `project` entspricht dem Namen des Datenbankprojektes, mit dem wir arbeiten möchten. Eine Liste der vorhandenen Projekte erhalten wir entweder mit einem Blick in Field Desktop unter "Projekt" \> "Öffnen..." oder in R mit der Funktion `idf_projects()`:
 
 ```{r eval = FALSE}
 idf_projects(conn)
 ```
 
-Bis auf die Werte für "pwd" (das Passwort) und "project" (das Datenbankprojekt) sollten die Standardeinstellungen der Funktion üblicherweise ausreichen. Mehr informationen zu anderen Einstellungen lassen sich mit einem Blick in die Dokumentation anzeigen: 
+Bis auf die Werte für `pwd` (das Passwort) und `project` (das Datenbankprojekt) sollten die Standardeinstellungen der Funktion üblicherweise ausreichen. Mehr Informationen zu anderen Einstellungen lassen sich mit einem Blick in die Dokumentation anzeigen:
 
 ```{r eval = FALSE}
 ?connect_idaifield
@@ -68,36 +72,37 @@ Bis auf die Werte für "pwd" (das Passwort) und "project" (das Datenbankprojekt)
 ?idf_ping
 ```
 
-## Index: Ein Überblick über die Datenbank 
+## Index: Ein Überblick über die Datenbank
 
-Die eben hergestellte Datenbankverbindung (`conn`) können wir benutzen, um einen Überblick über alle in der Datenbank enthaltenen *resources* zu bekommen. Eine *resource* entspricht dabei einem einzelnen Datensatz: Ein Befund ist also eine *resource*, ebenso wie eine Keramikscherbe oder ein Gebäude. Der Index enthält nur die grundlegendsten Informationen über jedes Objekt:
+Die eben hergestellte Datenbankverbindung (`conn`) können wir benutzen, um einen Überblick über alle in der Datenbank enthaltenen *resources* zu bekommen. Eine *resource* entspricht dabei einem einzelnen Datensatz: Ein Befund ist also eine *resource*, ebenso wie ein Keramik-Objekt oder ein Gebäude. Der Index enthält nur die grundlegendsten Informationen zu jeder *resource*:
 
 ```{r}
 index <- get_field_index(conn, verbose = TRUE, gather_trenches = TRUE)
 ```
 
-Mit `head()` können wir uns die ersten paar Zeilen des Ergebnisses ansehen:
+Mit `head()` können wir uns die ersten paar Zeilen ansehen:
 
 ```{r eval = FALSE}
 head(index)
 ```
+
 ```{r echo = FALSE}
 knitr::kable(head(index))
 ```
 
-* Jede *resource* hat eine *category*, die das Datenbankformular bezeichnet, das verwendet wurde, um sie anzulegen. Einen Überblick über alle *categories* bietet die Projektkonfiguration in Field Desktop. 
-* Die Spalte "UID" enthält den eindeutigen Bezeichner ([UUID](https://de.wikipedia.org/wiki/Universally_Unique_Identifier)), den die Datenbank im Hintergrund als Namen einer jeden *resource* verwendet.
-* *identifier* ist in der Standard-Übersetzung das Feld "Kurzbezeichner" in jedem Datenbankformular. 
-* *isRecordedIn* enthält den Schnitt oder den Survey, in dem die einzelne *resource* angelegt wurde. 
-* Unter *liesWithin* ist immer die *resource* angegeben, die in der Hierarchie der Datenbank direkt oberhalb der jeweiligen *resource* liegt - bei Funden also bspw. oftmals der jeweilige Befund, dem sie angehören. 
+-   Jede *resource* hat eine *category*, die das Datenbankformular bezeichnet, das verwendet wurde, um sie anzulegen. Einen Überblick über alle *categories* bietet die Projektkonfiguration in Field Desktop.
+-   Die Spalte "UID" enthält den eindeutigen Bezeichner ([UUID](https://de.wikipedia.org/wiki/Universally_Unique_Identifier)), den die Datenbank im Hintergrund als Namen einer jeden *resource* verwendet.
+-   *identifier* ist in der Standard-Übersetzung das Feld "Bezeichner" in jedem Datenbankformular.
+-   *isRecordedIn* enthält den Schnitt oder den Survey, in dem die einzelne *resource* angelegt wurde.
+-   Unter *liesWithin* ist immer die *resource* angegeben, die in der Hierarchie der Datenbank direkt oberhalb der jeweiligen *resource* liegt - bei Funden also bspw. oftmals der jeweilige Befund, dem sie angehören.
 
-Die anderen drei Spalten werden nur generiert, wenn -- wie in dem Beispiel oben -- für `verbose = ` und `gather_trenches = ` der Wert `TRUE` gesetzt wurde: 
+Die anderen drei Spalten werden nur generiert, wenn -- wie in dem Beispiel oben -- für `verbose =` und `gather_trenches =` der Wert `TRUE` gesetzt wurde:
 
-* *shortDescription* (von `verbose = TRUE` hinzugefügt) ist der Inhalt des Feldes "Kurzbeschreibung", der in Listen- und Kartenansicht in Field Desktop unter bzw. neben dem "Kurzbezeichner" zu sehen ist. 
-* *liesWithinLayer* (von `verbose = TRUE` hinzugefügt) enthält immer den Namen einer *resource* der *category* "Feature" (bzw. Stratigraphische Einheit), in der der angegebene Fund liegt. Für Proben, bspw., die in der Datenbank innerhalb eines Fundes in einem Befund liegen, kann hier der entsprechende Befund nachgeschlagen werden, während bei *liesWithin* nur der Fund angegeben wäre. 
-* *Place*  (von `gather_trenches = TRUE` hinzugefügt) enthält den "Ort" innerhalb dessen die entsprechende *resource* liegt. 
+-   *shortDescription* (von `verbose = TRUE` hinzugefügt) ist der Inhalt des Feldes "Kurzbeschreibung", der in Listen- und Kartenansicht in Field Desktop unter bzw. neben dem "Bezeichner" zu sehen ist.
+-   *liesWithinLayer* (von `verbose = TRUE` hinzugefügt) enthält immer den Namen einer *resource* der *category* "Feature" (bzw. Stratigraphische Einheit), in der der angegebene Fund liegt. Für Proben, bspw., die in der Datenbank innerhalb eines Fundes in einem Befund liegen, kann hier der entsprechende Befund nachgeschlagen werden, während bei *liesWithin* nur der Fund angegeben wäre.
+-   *Place* (von `gather_trenches = TRUE` hinzugefügt) enthält den "Ort" innerhalb dessen die entsprechende *resource* liegt.
 
-Weitere Informationen: 
+Weitere Informationen:
 
 ```{r eval = FALSE}
 ?get_field_index
@@ -105,7 +110,7 @@ Weitere Informationen:
 
 ## Visueller Überblick
 
-Wir können unseren ersten Plot aus dem Index erstellen, der uns einen sehr allgemeinen Überblick über unsere Daten gibt. Verwenden wir dazu die `%>%`-Funktion von `dplyr` (den sog. Pipe-Operator) sowie `ggplot2`:
+Wir können unseren ersten Plot aus dem Index erstellen, der uns einen sehr allgemeinen Überblick über unsere Daten gibt. Verwenden wir dazu die `%>%`-Funktion (den sog. Pipe-Operator, den wir z.B. mit dem auch sonst nützlichen Paket `dplyr` hinzufügen können) sowie `ggplot2`:
 
 ```{r message = FALSE, warning = FALSE}
 library(dplyr)
@@ -116,7 +121,7 @@ index %>%
   geom_bar()
 ```
 
-Wir können sehen, dass die Daten eine Vielzahl von Funden umfassen, die in verschiedenen "Layern" und "Trenches" aufgenommen wurden. Um an genauere Informationen heranzukommen und einige nützlichere Diagramme zu erstellen, werden wir nun unsere den eigentlichen Datenbestand importieren. 
+Wir können sehen, dass die Daten einige Funde umfassen, die in verschiedenen "Layer"- und "Trench"-*resources* aufgenommen wurden. Um an genauere Informationen heranzukommen und einige nützlichere Diagramme zu erstellen, werden wir nun unsere den eigentlichen Datenbestand importieren.
 
 # Der Import von Datensätzen
 
@@ -126,29 +131,30 @@ Wir können die vollständige "rtest"-Projektdatenbank in R importieren, indem w
 idaifield_test_docs <- get_idaifield_docs(connection = conn)
 ```
 
-Auch hier lohnt sich ein Blick in die Dokumentation: 
+Auch hier lohnt sich ein Blick in die Dokumentation:
 
 ```{r eval = FALSE}
 ?get_idaifield_docs
 ```
 
-Mit dieser Funktion werden jedoch **alle** existenten Datensätze importiert. Dies ist nicht unbedingt sinnvoll, da es gerade bei großen Datenbanken lange dauern und viel Speicherplatz aufbrauchen kann. 
+Mit dieser Funktion werden jedoch **alle** Datensätze importiert. Während das für das "rtest"-Projekt schnell erledigt ist, ist es bei Verwendung realer Daten in den meisten Fällen nicht sinnvoll. Gerade bei großen Datenbanken kann dieser Schritt lange dauern und unnötig viel Speicher verbrauchen.
 
 ## Queries
 
-`idaifieldR` enthält zwei Funktionen, anhand derer eine Teilmenge aus der Datenbank abgefragt werden kann: 
+`idaifieldR` bietet zwei Funktionen, anhand derer eine Teilmenge aus der Datenbank abgefragt werden kann:
 
 ```{r eval = FALSE}
 ?idf_query
 ?idf_index_query
 ```
 
-Mit ihnen lassen sich bestimmte Felder abgreifen. Versuchen wie zum Beispiel, alle Keramik-Datensätze (also: *resources* der *category* "*Pottery*") aus der Datenbank zu importieren: 
+Mit ihnen lassen sich bestimmte Felder abgreifen. Versuchen wir zum Beispiel, alle Keramik-Datensätze (also: *resources* der *category* "*Pottery*") aus der Datenbank zu importieren:
 
 ```{r }
 pottery <- idf_query(conn, field = "category", value = "Pottery")
 ```
-In RStudio können wir uns das Ergebnis mit `View(idaifield_test_docs)` bzw. `View(pottery)` oder durch Klicken auf die Liste im Environment-Fenster ansehen. Es handelt sich um eine benannte verschachtelte Liste der Klasse `idaifield_docs`, die ein Element für jede *resource* in der Datenbank enthält und die ursprüngliche `JSON`-Struktur widerspiegelt. Der Name jeder Liste ist der Kurzbezeichner (*identifier*) der zugehörigen *resource*. Die verschachtelte Liste `doc$resource` enthält den eigentlichen Datensätz für jede *resource*, während die anderen zugehörigen Listen Informationen über die an jeder *resource* vorgenommenen Änderungen zusammen mit ihren Basisdaten wie der *UUID* enthalten, die Field Desktop intern als eindeutigen Namen jedes Datensatzes verwendet. Wir können diese Liste verwenden, um Änderungen an Datenbankeinträgen auf einer Zeitachse, sortiert nach Benutzer*innen usw., zu visualisieren.
+
+In RStudio können wir uns das Ergebnis mit `View(idaifield_test_docs)` bzw. `View(pottery)` oder durch Klicken auf die Liste im Environment-Fenster ansehen. Es handelt sich um eine benannte verschachtelte Liste der Klasse `idaifield_docs`, die ein Element für jede *resource* in der Datenbank enthält. Dies spiegelt die ursprüngliche `JSON`-Struktur wider. Der Name jeder Liste ist der Bezeichner (*identifier*) der zugehörigen *resource*. Die verschachtelte Liste `doc$resource` enthält den eigentlichen Datensatz für jede *resource*, während die anderen zugehörigen Listen Informationen über die an jeder *resource* vorgenommenen Änderungen zusammen mit ihren Basisdaten wie der *UUID* enthalten, die Field Desktop intern als eindeutigen Namen jedes Datensatzes verwendet. Wir könnten diese Liste bspw. verwenden, um Änderungen an Datenbankeinträgen auf einer Zeitachse zu visualisieren.
 
 ## Rohdaten und Resourcen
 
@@ -158,7 +164,7 @@ Obwohl es für die weitere Verarbeitung nicht notwendig ist, können wir `idaifi
 pottery <- check_and_unnest(pottery)
 ```
 
-Wir sehen, dass es sich jetzt um ein *idaifield_resources*-Objekt handelt und weniger Speicherplatz benötigt. Wenn wir das Objekt mit `View(pottery)` in RStudio ansehen, zeigt sich, dass es nur die Informationen der einzelnen Datensätze enthält, d.h. die tatsächlichen Daten, die wir in Field Desktop eingegeben haben. Dieser Schritt kann automatisch von den internen `idaifieldR`-Funktionen durchgeführt werden. 
+Wir sehen, dass es sich jetzt um ein *idaifield_resources*-Objekt handelt und weniger Speicherplatz benötigt. Wenn wir das Objekt mit `View(pottery)` in RStudio ansehen, zeigt sich, dass es nur die Informationen der einzelnen Datensätze enthält, d.h. die tatsächlichen Daten, die wir in Field Desktop eingegeben haben. Dieser Schritt kann automatisch von den internen `idaifieldR`-Funktionen durchgeführt werden.
 
 ## Filtern der `idaifield_...`-Listen
 
@@ -168,32 +174,31 @@ Eine Funktion zum Filtern der gesamten Datenbank bietet das Paket mit `idf_selec
 ?idf_select_by
 ```
 
-So können wir zum Beispiel auch aus dem eben importierten gesamten Datenbestand nur die *resources* der *category* Keramik (*Pottery*) auswählen: 
+So können wir zum Beispiel auch aus dem eben importierten gesamten Datenbestand nur die *resources* der *category* Keramik (*Pottery*) auswählen:
 
 ```{r }
 pottery <- idf_select_by(idaifield_test_docs, by = "category", value = "Pottery")
 ```
 
-Allerdings sind die oben genannten *query*-Funktionen gerade für größere Projektdatenbanken wirklich empfehlenswerter. Dennoch kann `idf_select_by()` auch verwendet werden, um diese Importe nochmals zu filtern. 
+Allerdings sind die oben genannten *query*-Funktionen gerade für größere Projektdatenbanken bedeutend empfehlenswerter. `idf_select_by()` kann verwendet werden, um diese Importe nochmals zu filtern.
 
 # Erweiterte Bearbeitung: Vereinfachen der Liste
 
-Beim Durchsuchen der Liste ist uns vielleicht aufgefallen, dass sie weiterhin oftmals verschachtelt ist (bspw. *geometry*, *dating*, oder alle Einträge, die im Formular mehr als einen Wert elauben), und außerdem in den Beziehungsangaben (*relations*) weiterhin die *UUID*s statt den Kurzbezeichnern (*identifier*) enthält. Dies können wir mit der Funktion `simplify_idaifield()` vereinfachen. Schauen wir uns zunächst die Dokumentation an:
+Beim Durchsuchen der Liste ist uns vielleicht aufgefallen, dass sie weiterhin oftmals verschachtelt ist (bspw. *geometry*, *dating*, oder alle Einträge, die im Formular mehr als einen Wert erlauben), und außerdem in den Beziehungsangaben (*relations*) weiterhin die *UUID*s statt den Bezeichnern (*identifier*) enthält. Dies können wir mit der Funktion `simplify_idaifield()` vereinfachen. Schauen wir uns zunächst die Dokumentation an:
 
 ```{r eval = FALSE}
 ?simplify_idaifield
 ```
 
-Meistens sollte es ausreichen, die Voreinstellungen zu verwenden und nur die importierte `idaifield_docs` oder `idaifield_resources` Liste zu übergeben. Wenn wir allerdings eine Teilmenge der Datenbank übergeben, wie es hier mit dem Objekt `pottery` der Fall ist, sollten wir unbedingt den zuvor erstellten `index` (`?get_field_index`) mit angeben, da das Ersetzen von *UUID*s durch Kurzbezeichner (*identifier*) sonst nicht zufriedenstellend funktioniert:
+Meistens sollte es ausreichen, die Voreinstellungen zu verwenden und nur die importierte `idaifield_docs` oder `idaifield_resources` Liste zu übergeben. Wenn wir allerdings eine Teilmenge der Datenbank übergeben, wie es hier mit dem Objekt `pottery` der Fall ist, sollten wir unbedingt den zuvor erstellten `index` (`?get_field_index`) mit angeben, da das Ersetzen von *UUID*s durch Bezeichner (*identifier*) sonst nicht zufriedenstellend funktioniert:
 
 ```{r }
 pottery_simple <- simplify_idaifield(pottery, uidlist = index)
 ```
 
-
 ## Optionen von `simplify_idaifield()`
 
-Dies übernimmt die Standardeinstellungen für die Funktion. Um zu verstehen, welche Konsequenzen das für die Daten hat, sollten wir mehrfach verschiedene Einstellungen ausprobieren. 
+Um zu verstehen, welche Konsequenzen das für die Daten hat, sollten wir mehrfach verschiedene Einstellungen ausprobieren.
 
 ```{r }
 pottery_simple <- simplify_idaifield(pottery, 
@@ -205,15 +210,15 @@ pottery_simple <- simplify_idaifield(pottery,
                                      use_exact_dates = TRUE)
 ```
 
-* Die Funktion weist uns darauf hin, dass sie versucht, die englischen Werte von mehrsprachigen Eingabefeldern zu verwenden, wenn dies möglich ist. Wenn das entsprechende Eingabefeld keinen englischen Wert hat, verwendet `simplify_idaifield()` die nächste verfügbare Sprache (in alphabetischer Reihenfolge). Wenn wir alle Sprachen aus den mehrsprachigen Eingabefeldern behalten wollen, können wir `language = "all"` (die Standardeinstellung) verwenden. 
-* Mit `keep_geometry = FALSE` werden alle Koordinateninformationen aus den Ressourcen entfernt. `keep_geometry = FALSE` behält die Geomtrie-Angaben und formatiert sie so um, dass sie bspw. mit dem [sp](https://cran.r-project.org/web/packages/sp/index.html)-Paket weiter verwendbar sind um Karten darzustellen. 
-* `replace_uids` ist standardmäßig auf `TRUE` gesetzt und ersetzt *UUID*s in den Daten durch ihre entsprechenden Bezeichner, um sie besser lesbar zu machen. Gleichzeitig wird hierbau auch die *relation* *liesWithinLayer* ergänzt, die oben bereits erläutert wurde.
-* Mit `spread_fields = TRUE` werden Checkbox-Felder sowie das Kampagnenfeld automatisch auf mehrere Einträge verteilt, sodass sie in mehreren Spalten in einer Matrix gespeichert werden. Dies Funktioniert derzeit leider nur für Felder, die in dem neuen Projektkonfigurations-Editor bearbeitet wurden und somit in dem Konfigurations-Datensatz, den wir mit `get_configuration()` erreichen, vorhanden sind. 
-* `use_exact_dates = TRUE` sorgt dafür, dass die Datierung für einen Datensatz auf das genaue Jahr festgelegt wird, sofern selbiger Datensatz eine Datierung enthält, die "exakt" ist. Andernfalls werden in *dating.min* und *dating.max* immer die Minimal- und Maximalwerte für einen Datensatz gespeichert. Die eigentlichen Eingaben können wir mit *dating.comment* nachvollziehen. 
+-   Die Funktion weist uns darauf hin, dass sie versucht, die englischen Werte von mehrsprachigen Eingabefeldern zu verwenden, wenn dies möglich ist. Wenn das entsprechende Eingabefeld keinen englischen Wert hat, verwendet `simplify_idaifield()` die nächste verfügbare Sprache (in alphabetischer Reihenfolge). Wenn wir alle Sprachen aus den mehrsprachigen Eingabefeldern behalten wollen, können wir `language = "all"` (die Standardeinstellung) verwenden.
+-   Mit `keep_geometry = FALSE` werden alle Koordinateninformationen aus den Ressourcen entfernt. `keep_geometry = FALSE` behält die Geometrie-Angaben und formatiert sie so um, dass sie bspw. mit dem [sp](https://cran.r-project.org/web/packages/sp/index.html)-Paket verwendbar sind, um Karten darzustellen.
+-   `replace_uids` ist standardmäßig auf `TRUE` gesetzt und ersetzt *UUID*s in den Daten durch ihre entsprechenden Bezeichner (*identifier*), um sie besser lesbar zu machen. Gleichzeitig wird hierbei auch die *relation* *liesWithinLayer* ergänzt, die oben bereits erläutert wurde.
+-   Mit `spread_fields = TRUE` werden Checkbox-Felder sowie das Kampagnenfeld automatisch auf mehrere Einträge verteilt, sodass sie (später) in mehreren Spalten in einer Matrix oder einem data.frame angezeigt werden. Dies funktioniert derzeit leider nur für Felder, die in dem neuen Projektkonfigurations-Editor bearbeitet wurden und somit in dem Konfigurations-Datensatz, den wir mit `get_configuration()` erreichen, vorhanden sind.
+-   `use_exact_dates = TRUE` sorgt dafür, dass die Datierung für einen Datensatz auf das genaue Jahr festgelegt wird, sofern selbiger Datensatz eine Datierung enthält, die "exakt" ist. Andernfalls werden in *dating.min* und *dating.max* immer die Minimal- und Maximalwerte für einen Datensatz gespeichert. Die eigentlichen Eingaben können wir mit *dating.comment* nachvollziehen.
 
-**Wichtig:** Nur wenn wir die gesamte Datenbank mit dieser Funktion verarbeiten, brauchen wir den Index (`uidlist`) nicht angeben, da die Funktion ihren eigenen Index erzeugt. Wenn wir jedoch nur eine Teilmenge aller Daten verarbeiten wollen, sollten wir unbedingt einen Index der gesamten Datenbank angeben.
+**Wichtig:** Nur wenn wir die gesamte Datenbank mit dieser Funktion verarbeiten, brauchen wir den Index (`uidlist`) nicht angeben, da die Funktion ihren eigenen Index erzeugt. Wenn wir jedoch nur eine Teilmenge aller Daten verarbeiten wollen, sollten wir unbedingt einen Index der gesamten Datenbank angeben, da sonst die Übersetzung von *UUID* zu *identifier* nicht für alle *resources* funktioniert.
 
-Die Liste hat nun die Klasse `idaifield_simple`. Schauen wir uns die resultierende Liste noch ein mal an, indem wir sie im Environment-Fenster in RStudio anklicken oder `View(pottery_simple)` verwenden. Alle `idaifield_...`-Objekte tragen außerdem die Verbindung und den Namen des Projekts als Attribute für die spätere Verwendung mit sich. Wir können sie mit `attributes(pottery_simple)` anzeigen: 
+Die Liste hat nun die Klasse `idaifield_simple`. Schauen wir uns die resultierende Liste noch ein mal an, indem wir sie im Environment-Fenster in RStudio anklicken oder `View(pottery_simple)` verwenden. Alle `idaifield_...`-Objekte tragen außerdem die Verbindung und den Namen des Projekts als Attribute für die spätere Verwendung mit sich. Wir können sie mit `attributes(pottery_simple)` anzeigen:
 
 ```{r eval = FALSE}
 attributes(pottery_simple)
@@ -221,13 +226,13 @@ attributes(pottery_simple)
 
 # Umwandlung in Matrix / data.frame
 
-Um das meiste aus den Daten herausholen zu können ist es empfehlenswert, die Liste selbst zu verwenden und alle Daten nach Bedarf umzuformatieren. Allerdings verfügt `idaifieldR` über eine Funktion, die die Liste in eine Matrix umwandelt. Dies sollte am besten anhand der vereinfachten Listen geschehen (also Listen der Klassse `idaifield_simple`):
+Um das meiste aus den Daten herausholen zu können ist es empfehlenswert, die Liste selbst zu verwenden und alle Daten nach Bedarf umzuformatieren. Allerdings verfügt `idaifieldR` auch über eine Funktion, die die Liste in eine Matrix umwandelt. Dies sollte am besten anhand der vereinfachten Listen geschehen (also Listen der Klassse `idaifield_simple`):
 
 ```{r }
 pottery_mat <- idaifield_as_matrix(pottery_simple)
 ```
 
-Die Matrix lässt sich schnell in einen data.frame umwandeln, mit dem Plots einfacher von der Hand gehen. Gleichzeitig können wir die R-Funktion `type.convert()` verwenden, um bspw. numerische Werte automatisch als Zahlen erkennen zu lassen: 
+Die Matrix lässt sich schnell in einen data.frame umwandeln, mit dem Plots einfacher von der Hand gehen. Gleichzeitig können wir die R-Funktion `type.convert()` verwenden, um bspw. numerische Werte automatisch als Zahlen erkennen zu lassen:
 
 ```{r }
 pottery_df <- as.data.frame(pottery_mat) %>%
@@ -236,7 +241,7 @@ pottery_df <- as.data.frame(pottery_mat) %>%
 
 # Einige Beispiel-Diagramme
 
-Mit dem `pottery_df`-data.frame können wir nun einige einfache Diagramme erstellen: 
+Mit dem `pottery_df`-data.frame können wir nun einige einfache Diagramme erstellen:
 
 ```{r }
 library(forcats)
@@ -257,42 +262,42 @@ pottery_df %>%
 Derzeit gibt es zwei Funktionen, die es erleichtern, die internen Namen von Feldern durch ihre Übersetzungen in verschiedenen Sprachen zu ersetzen:
 
 ```{r }
-core_lang_list <- download_language_list(project = "core", language = "en")
-milet_lang_list <- download_language_list(project = "Milet", language = "en")
+core_lang_list <- download_language_list(project = "core", language = "de")
+milet_lang_list <- download_language_list(project = "Milet", language = "de")
 ```
 
-Da diese Funktionen die Sprachkonfiguration von [github.com/dainst/idai-field](https://github.com/dainst/idai-field/tree/master/core/config) herunterladen (siehe: `?download_language_list`) und sie sich nicht -- oder wenigstens nicht häufig -- ändern sollten, können wir das Ergebnis in einer lokalen RDS-Datei speichern, nachdem wir alles vorbereitet haben. Auf den eben heruntergeladenen Listen können wir eine Lookup-Tabelle (`?get_language_lookup`) wie folgt vorbereiten:
-
+Da diese Funktionen die Sprachkonfiguration von [github.com/dainst/idai-field](https://github.com/dainst/idai-field/tree/master/core/config) herunterladen (siehe: `?download_language_list`) und sie sich nicht -- oder wenigstens nicht häufig -- ändern sollten, kann es sinnvoll sein, das Ergebnis in einer lokalen Datei zu speichern, nachdem wir alles vorbereitet haben. Aus den eben heruntergeladenen Listen können wir eine Lookup-Tabelle (`?get_language_lookup`) wie folgt generieren:
 
 ```{r }
-lookup <- get_language_lookup(core_lang_list, language = "en")
-lookup <- rbind(lookup, get_language_lookup(milet_lang_list, language = "en"))
+lookup <- get_language_lookup(core_lang_list, language = "de")
+lookup <- rbind(lookup, get_language_lookup(milet_lang_list, language = "de"))
 ```
 
-Um wiederum die Übersetzungen aus der Projektkonfiguration zu erhalten, müssen wir die zunächst mit `get_configuration()` abrufen und dann ebenfalls umwandeln. 
+Um wiederum die Übersetzungen aus der Projektkonfiguration zu erhalten, müssen wir die zunächst mit `get_configuration()` abrufen und dann ebenfalls umwandeln.
 
 ```{r }
 config <- get_configuration(conn)
-lookup_conf <- get_language_lookup(config$languages, language = "en")
+lookup_conf <- get_language_lookup(config$languages, language = "de")
 ```
 
-Wir können nun die beiden Ergebnisse verbinden und das Resultat anschauen: 
+Wir können nun die beiden Ergebnisse verbinden und das Resultat anschauen:
 
 ```{r }
-lang_lookup_en <- bind_rows(lookup_conf, lookup)
+lang_lookup_de <- bind_rows(lookup_conf, lookup)
 ```
+
 ```{r eval = FALSE}
-head(lang_lookup_en)
+head(lang_lookup_de)
 ```
 
 ```{r echo = FALSE}
-head(lang_lookup_en) %>%
+head(lang_lookup_de) %>%
   knitr::kable()
 ```
 
 # Weitere Funktionen
 
-Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/releases) wurde mit den letzten Versionen erheblich erweitert. Alle Schritte aus `simplify_idaifield()` lassen sich bspw. auch manuell durchführen. Genauere Informationen dazu und zum Vorgang sind in der Dokumentation zu den einzelnen Funktionen enthalten. Abgesehen davon wurden folgende Funktionen in diesem Tutorial zwar nicht erwähnt, lassen sich aber über die Dokumentation erschließen: 
+Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/releases) wurde mit den letzten Versionen erheblich erweitert. Alle Schritte aus `simplify_idaifield()` lassen sich bspw. auch manuell durchführen. Genauere Informationen dazu und zum Vorgang sind in der Dokumentation zu den einzelnen Funktionen enthalten. Abgesehen davon wurden folgende Funktionen in diesem Tutorial zwar nicht erwähnt, lassen sich aber über die Dokumentation erschließen:
 
 ```{r eval = FALSE}
 ?idf_show_categories
@@ -311,5 +316,4 @@ Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/rele
 
 # Call for Contributions
 
-Mit Version 0.3.2 ist das Paket noch immer nicht vollständig fertig für die Veröffentlich in CRAN. Hoffentlich finden sich nach dieser Anleitung weitere Interessierte, die bei der Vorbereitung für die Publikation und außerdem dem Testen des Paketes für verschiedene Projektkonfigurationen und Anwendungszwecke helfen können. 
-
+idaifieldR kann Nutzer\*innen von Field Desktop helfen, ihre Daten auszuwerten. In Zukunft möchte ich das Paket ausgiebiger mit verschiedenen Projektkonfigurationen testen. Für die Weiterentwicklung ist jedoch dringend das Feedback von Nutzer\*innen nötig. Alle Interessierten sind herzlich eingeladen auf welche Weise Ihnen beliebt an der Entwicklung von idaifieldR mitzuwirken: sei es ein Hinweis auf Fehler, oder ein Wunsch nach neuen Funktionen, oder direkte Mitarbeit am Paket.
