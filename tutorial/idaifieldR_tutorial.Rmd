@@ -1,7 +1,8 @@
 ---
-title: "Tutorial zu idaifieldR"
+title: "Import von Daten aus Field Desktop in R"
+subtitle: "Tutorial zu Workflow und Funktionsumfang des Paketes idaifieldR"
 author: "Lisa Steinmann"
-date: "`r Sys.Date()`"
+date: ", `r format(Sys.Date(), '%d. %B %Y')`"
 output:
   html_document:
     highlight: breezedark

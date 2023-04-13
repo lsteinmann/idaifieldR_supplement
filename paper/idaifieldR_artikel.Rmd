@@ -1,7 +1,8 @@
 ---
-title: "R wie in: Reproduzierbar -- Auswertung von Daten aus Field Desktop mit idaifieldR"
+title: "R wie in: Reproduzierbar"
+subtitle: "Auswertung von Daten aus Field Desktop mit idaifieldR"
 author: "Lisa Steinmann"
-date: "`r Sys.Date()`"
+date: ", `r format(Sys.Date(), '%d. %B %Y')`"
 output:
   html_document:
     highlight: breezedark
@@ -10,21 +11,20 @@ output:
     theme: paper
     toc: yes
     number_sections: yes
-    css: "../mat/style.css"
+    css: ../mat/style.css
   officedown::rdocx_document:
-    fig_width: 6
     plots:
       style: Normal
       align: center
       caption:
         style: Image Caption
-        pre: 'Abb. '
-        sep: ': '
     mapstyles:
       Normal: First Paragraph
   pdf_document:
     toc: yes
-bibliography: "../mat/references.bib"
+  word_document:
+    toc: yes
+bibliography: ../mat/references.bib
 csl: "../mat/deutsches-archaologisches-institut.csl"
 ---
 
@@ -45,6 +45,7 @@ PlotTheme <- theme(legend.justification=c(1,1),
   
 
 ```
+
 
 Field Desktop (oder: [iDAI.field](https://field.idai.world/)) ist der Dokumentations-Datenbankclient für Feldforschungsprojekte des DAI und findet auf zahlreichen Ausgrabungen inner- und außerhalb des DAI Anwendung[^1]. Der Client ermöglicht flexible Projektkonfigurationen bei einer in groben Zügen gleichbleibenden Datenstruktur, und ist damit für die unterschiedlichsten archäologischen Projekte geeignet. Der wahre Nutzen von Datenbanken besteht in den Möglichkeiten ihrer Auswertung. Die Stärke einer Datenbank ist es zwar auch, aber nicht nur, das traditionelle, individuelle Notizbuch in eine digitale und kollaborative Form zu überführen, sondern vor Allem Informationen über einzelne Objekte an einem Ort in einer strukturierten und quantitativ erfassbaren Art und Weise nach festgelegten Standards zu bündeln.
 
@@ -85,9 +86,12 @@ Mit den Optionen, die der iDAI.field-Mikrokosmos bereits bietet, ist es offensic
 
 Die Verwendung von Daten aus Field Desktop / iDAI.field in R ist mit dem Export und Import von Tabellen problemlos möglich. Mit dem manuellen Export existiert hier jedoch erneut ein nicht leicht reproduzierbarer Schritt der Datenauswahl, in dem Kontext und Kategorie der zu exportierenden Daten festgelegt werden können und müssen. Gleichzeitig ist diese Herangehensweise nicht so dynamisch, wie die Auswertung archäologischer Kontexte es manchmal erfordert. Für Zwischenberichte müssen immer wieder neue und doch gleiche Auswertungen aus einem durch Grabungs- und Fundbearbeitungskampagnen regelmäßig aktualisierten Datenbestand erstellt werden. Wenn sich nach weiterer Arbeit an den Befunden der Datenbestand geändert hat, muss erneut der gleiche Export ausgeführt und die alte Datei ersetzt werden.
 
+![Abb. 1: iDAI.field & R -> idaifieldR](../figures/Abb_1_idaifieldR.png)
+
 # idaifieldR!
 
 Das Ziel von idaifieldR ist es, diesen Schritt zu eliminieren und eine flexiblere und dynamischere Auswertung der Datenbank zu ermöglichen. Mit nur wenigen Zeilen lässt sich die gesamte Datenbank oder eine gezielte Auswahl mit idaifieldR in R importieren.
+
 
 idaifieldR greift dafür auf den CouchDB-Server, den Field Desktop im Hintergrund verwendet, zu. Der direkte Import aus der Datenbank bringt jedoch einige Probleme mit sich: Die Daten -- ursprünglich im JSON-Format, das vielen sicher aus der Verwaltung der Projektkonfigurationen bis zur dritten Version von iDAI.field bekannt ist[^11] -- werden als sog. Liste nach R importiert. Neben dem Import enthält idaifieldR Funktionen, mit denen sich die Daten etwas formatieren und bereinigen lassen, um die Weiterarbeit mit R zu vereinfachen.
 

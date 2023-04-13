@@ -1,3 +1,21 @@
 body {
-     background: url("../figures/idaifieldR_bg.png") no-repeat top center;
+  background-image: url("../figures/idaifieldR_bg.png");
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.main-container {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 6px 4px 10px 1px #969696;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+#header {
+  text-align: right;
+  margin-bottom: 50px;
+}
+
+#header > H4.date, H4.author {
+  font-size: 10pt;
+  display: inline;
 }
