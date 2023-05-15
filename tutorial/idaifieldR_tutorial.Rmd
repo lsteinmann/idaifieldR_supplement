@@ -99,7 +99,7 @@ knitr::kable(head(index))
 Die anderen drei Spalten werden nur generiert, wenn -- wie in dem Beispiel oben -- für `verbose =` und `gather_trenches =` der Wert `TRUE` gesetzt wurde:
 
 -   *shortDescription* (von `verbose = TRUE` hinzugefügt) ist der Inhalt des Feldes "Kurzbeschreibung", der in Listen- und Kartenansicht in Field Desktop unter bzw. neben dem "Bezeichner" zu sehen ist.
--   *liesWithinLayer* (von `verbose = TRUE` hinzugefügt) enthält immer den Namen einer *resource* der *category* "Feature" (bzw. Stratigraphische Einheit), in der der angegebene Fund liegt. Für Proben, bspw., die in der Datenbank innerhalb eines Fundes in einem Befund liegen, kann hier der entsprechende Befund nachgeschlagen werden, während bei *liesWithin* nur der Fund angegeben wäre.
+-   *liesWithinLayer* (von `verbose = TRUE` hinzugefügt) enthält immer den Namen einer *resource* der *category* "Feature" (bzw. Stratigraphische Einheit), in der der angegebene Fund liegt (siehe: `?find_layer`). Für Proben, bspw., die in der Datenbank innerhalb eines Fundes in einem Befund liegen, kann hier der entsprechende Befund nachgeschlagen werden, während bei *liesWithin* nur der Fund angegeben wäre.
 -   *Place* (von `gather_trenches = TRUE` hinzugefügt) enthält den "Ort" innerhalb dessen die entsprechende *resource* liegt.
 
 Weitere Informationen:
@@ -191,9 +191,9 @@ Beim Durchsuchen der Liste ist uns vielleicht aufgefallen, dass sie weiterhin of
 ?simplify_idaifield
 ```
 
-Meistens sollte es ausreichen, die Voreinstellungen zu verwenden und nur die importierte `idaifield_docs` oder `idaifield_resources` Liste zu übergeben. Wenn wir allerdings eine Teilmenge der Datenbank übergeben, wie es hier mit dem Objekt `pottery` der Fall ist, sollten wir unbedingt den zuvor erstellten `index` (`?get_field_index`) mit angeben, da das Ersetzen von *UUID*s durch Bezeichner (*identifier*) sonst nicht zufriedenstellend funktioniert:
+In vielen Fällen kann es ausreichen, die Voreinstellungen zu verwenden und nur die importierte `idaifield_docs` oder `idaifield_resources` Liste zu übergeben. Wenn wir allerdings eine Teilmenge der Datenbank übergeben, wie es hier mit dem Objekt `pottery` der Fall ist, sollten wir unbedingt den zuvor erstellten `index` (`?get_field_index`) mit angeben, da das Ersetzen von *UUID*s durch Bezeichner (*identifier*) sonst nicht zufriedenstellend funktioniert:
 
-```{r }
+```{r eval = FALSE}
 pottery_simple <- simplify_idaifield(pottery, uidlist = index)
 ```
 
@@ -211,8 +211,8 @@ pottery_simple <- simplify_idaifield(pottery,
                                      use_exact_dates = TRUE)
 ```
 
--   Die Funktion weist uns darauf hin, dass sie versucht, die englischen Werte von mehrsprachigen Eingabefeldern zu verwenden, wenn dies möglich ist. Wenn das entsprechende Eingabefeld keinen englischen Wert hat, verwendet `simplify_idaifield()` die nächste verfügbare Sprache (in alphabetischer Reihenfolge). Wenn wir alle Sprachen aus den mehrsprachigen Eingabefeldern behalten wollen, können wir `language = "all"` (die Standardeinstellung) verwenden.
--   Mit `keep_geometry = FALSE` werden alle Koordinateninformationen aus den Ressourcen entfernt. `keep_geometry = FALSE` behält die Geometrie-Angaben und formatiert sie so um, dass sie bspw. mit dem [sp](https://cran.r-project.org/web/packages/sp/index.html)-Paket verwendbar sind, um Karten darzustellen.
+-   Die Funktion weist uns darauf hin, dass englisch als Sprache in der Konfiguration nicht vorgesehen ist. Wenn das entsprechende Eingabefeld keinen englischen Wert hat, verwendet `simplify_idaifield()` alle Sprachen oder wenn vorhanden die nächste verfügbare Sprache (in alphabetischer Reihenfolge). Wenn wir alle Sprachen aus den mehrsprachigen Eingabefeldern behalten wollen, können wir `language = "all"` (die Standardeinstellung) verwenden.
+-   Mit `keep_geometry = FALSE` werden alle Koordinateninformationen aus den Ressourcen entfernt. `keep_geometry = FALSE` behält die Geometrie-Angaben und formatiert sie so um, dass sie bspw. mit dem [sp](https://cran.r-project.org/web/packages/sp/index.html)-Paket verwendbar sind, um Karten darzustellen. Da alle Koordinaten in dreidimensionale Werte umformatiert werden (mit Höhe 0, falls keine angegeben worden ist), müssen hierfür die Höhenwerte ggf. wieder gelöscht werden.
 -   `replace_uids` ist standardmäßig auf `TRUE` gesetzt und ersetzt *UUID*s in den Daten durch ihre entsprechenden Bezeichner (*identifier*), um sie besser lesbar zu machen. Gleichzeitig wird hierbei auch die *relation* *liesWithinLayer* ergänzt, die oben bereits erläutert wurde.
 -   Mit `spread_fields = TRUE` werden Checkbox-Felder sowie das Kampagnenfeld automatisch auf mehrere Einträge verteilt, sodass sie (später) in mehreren Spalten in einer Matrix oder einem data.frame angezeigt werden. Dies funktioniert derzeit leider nur für Felder, die in dem neuen Projektkonfigurations-Editor bearbeitet wurden und somit in dem Konfigurations-Datensatz, den wir mit `get_configuration()` erreichen, vorhanden sind.
 -   `use_exact_dates = TRUE` sorgt dafür, dass die Datierung für einen Datensatz auf das genaue Jahr festgelegt wird, sofern selbiger Datensatz eine Datierung enthält, die "exakt" ist. Andernfalls werden in *dating.min* und *dating.max* immer die Minimal- und Maximalwerte für einen Datensatz gespeichert. Die eigentlichen Eingaben können wir mit *dating.comment* nachvollziehen.
@@ -311,6 +311,7 @@ Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/rele
 ?reformat_geometry
 ?gather_languages
 ?fix_dating
+?find_layer
 ?fix_relations
 ?convert_to_onehot
 ```
