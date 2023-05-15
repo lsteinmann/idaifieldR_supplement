@@ -44,7 +44,7 @@ library(idaifieldR)
 
 # Die Vorbereitung: Verbindung und Index
 
-Um diesem Tutorial direkt mit denselben Daten zu folgen, können wir das Projekt-Backup namens "rtest.json" aus dem "data"-Ordner in diesem Supplement in ein neues Projekt namens 'rtest' in unserem Field Client laden. Hierzu klicken wir in Field Desktop im Menü unter "Projekt" auf "Backup einlesen...". Nach einem Klick auf das Ordner-Symbol navigieren wir zum Speicherort von "rtest.json" aus diesem Supplement, und bestätigen die Datei mit "Öffnen". Als Projektkennung geben wir "rtest" ein. (**Achtung**: Nicht versehentlich ein bestehendes Projekt überschreiben!)
+Um diesem Tutorial direkt mit denselben Daten zu folgen, können wir das Projekt-Backup namens "rtest.json" aus dem "data"-Ordner in diesem Supplement in ein neues Projekt namens 'rtest' in unserem Field Client laden. Hierzu klicken wir in Field Desktop im Menü unter "Projekt" auf "Backup einlesen...". Nach einem Klick auf das Ordner-Symbol navigieren wir zum Speicherort von "rtest.jsonl" aus diesem Supplement, und bestätigen die Datei mit "Öffnen". Als Projektkennung geben wir "rtest" ein. (**Achtung**: Nicht versehentlich ein bestehendes Projekt überschreiben!)
 
 Dieser Test-Datensatz verwendet eine sehr leicht angepasste Projektkonfiguration, um die relevanten Funktionen von `idaifieldR` zu demonstrieren. Da in dieser Anleitung kaum projektspezifische Begriffe und Felder verwendet werden, ist es auch leicht möglich, der Anleitung mit einem beliebigen anderen Datenbankprojekt zu folgen.
 
