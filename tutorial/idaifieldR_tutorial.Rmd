@@ -141,11 +141,12 @@ Mit dieser Funktion werden jedoch **alle** Datensätze importiert. Während das 
 
 ## Queries
 
-`idaifieldR` bietet zwei Funktionen, anhand derer eine Teilmenge aus der Datenbank abgefragt werden kann:
+`idaifieldR` bietet drei Funktionen, anhand derer eine Teilmenge aus der Datenbank abgefragt werden kann:
 
 ```{r eval = FALSE}
 ?idf_query
 ?idf_index_query
+?idf_json_query
 ```
 
 Mit ihnen lassen sich bestimmte Felder abgreifen. Versuchen wir zum Beispiel, alle Keramik-Datensätze (also: *resources* der *category* "*Pottery*") aus der Datenbank zu importieren:
