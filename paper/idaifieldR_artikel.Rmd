@@ -22,8 +22,6 @@ output:
       Normal: First Paragraph
   pdf_document:
     toc: yes
-  word_document:
-    toc: yes
 bibliography: ../mat/references.bib
 csl: "../mat/deutsches-archaologisches-institut.csl"
 ---
@@ -111,7 +109,7 @@ Die Datei, aus der dieser Artikel generiert wurde, ist ein RMarkdown-Bericht. Di
 
 Zunächst verbinden wir uns mit der Datenbank und generieren einen Index, der alle *resources* mit einigen wenigen Angaben enthält, die in der Projektdatenbank existieren[^15]:
 
-[^15]: Als ironischer Twist werden nach den einführenden Worten zu Reproduzierbarkeit die für die Diagramme im Artikel verwendeten Roh-Daten im Supplement nicht mitgeliefert. In diesem Fall ist die unmittelbare Vorlage der dieser Daten leider (noch) nicht möglich, aber für die Funde im Areal der Michaelskirche im Rahmen einer revidierten Version von ([@steinmann_DionysosheiligtumSakrallandschaftMilet_2023]) geplant. Dass es nicht möglich ist, die vollständige Datenbank der Miletgrabung mit diesem Artikel zur Verfügung zu stellen, ist hoffentlich nachvollziehbar.
+[^15]: Als ironischer Twist werden nach den einführenden Worten zu Reproduzierbarkeit statt den gesamten für die Diagramme im Artikel verwendeten Roh-Daten nur eine kleine Auswahl im Supplement mitgeliefert. Dass es nicht möglich ist, die vollständige Datenbank der Miletgrabung mit diesem Artikel zur Verfügung zu stellen, ist hoffentlich nachvollziehbar.
 
 ```{r }
 library(idaifieldR)
@@ -162,6 +160,8 @@ p <- mk %>%
   ggplot(aes(x = fct_infreq(relation.isRecordedIn), fill = category)) +
   geom_bar() +
   labs(x = "Schnitt", y = "Anzahl", fill = "Kategorie")
+```
+```{r echo = FALSE}
 abbnr <- 3
 caption <- paste0("Abb. ", abbnr, ": Funde in den einzelnen Schnitten im Areal der Michaelskirche" )
 ```
@@ -188,6 +188,8 @@ p <- mk %>%
   ggplot(aes(x = fct_infreq(potteryGroup), fill = functionalCategory)) + 
   geom_bar() + 
   labs(x = "Keramikgruppe", y = "Anzahl", fill = "Funktion")
+```
+```{r echo = FALSE}
 abbnr <- abbnr + 1
 caption <- paste0("Abb. ", abbnr, ": Keramik nach Funktion und Gruppe aus dem Areal der Michaelskirche")
 ```
@@ -220,6 +222,8 @@ p <- mk %>%
                      y = fct_reorder(label, -dating.min)), 
                  linewidth = 2) + 
   labs(x = "Datierung", y = "Katalognummer (und Befund)", color = "Keramikgruppe")
+```
+```{r echo = FALSE}
 abbnr <- abbnr + 1
 caption <- paste0("Abb. ", abbnr, ": Datierungsspannen schwarz- und rotfiguriger Keramik aus dem Areal der Michaelskirche")
 ```
@@ -249,7 +253,8 @@ mk %>%
          relation.liesWithin, relation.isRecordedIn, 
          potteryGroup, vesselForm, 
          dating.min, dating.max, dating.source) %>%
-  write.csv("../data/MK_rf_sf_pottery_Kunisch_2016.csv", fileEncoding = "UTF-8")
+  write.csv("../data/MK_rf_sf_pottery_Kunisch_2016.csv", 
+            fileEncoding = "UTF-8")
 ```
 
 Die Datei enthält aus allen Datensätzen innerhalb des Ortes "MK_Michaelskirche" in der Datenbank der Miletgrabung in denen "[Kunisch 2016](https://zenon.dainst.org/Record/001471948)" als Quelle für die Datierung angegeben ist wenige grundlegende Informationen: den Bezeichner, den Befund und den Schnitt, die Keramikklasse, die Gefäßform sowie die Datierung und die Katalognummer. Die Tabelle ist im Supplement im entsprechenden Ordner enthalten. Über diesen Weg lassen sich schnell größere Datenmengen auswählen, bereinigen oder umformatieren und erneut nach Field Desktop importieren. Gleichzeitig ist die Möglichkeit, gezieltere Anfragen zu stellen und zu exportieren ggf. für die Beigabe in Publikationen -- wie hier demonstriert -- oder regelmäßigen Arbeitsberichten besonders hilfreich. Bisher ist dies über den csv-Export in Field Desktop ohne umständliches Zusammenfügen mehrerer Tabellen nicht möglich.
@@ -267,6 +272,8 @@ p <- date_created %>%
   ggplot(aes(x = date, fill = user)) +
   geom_histogram() + 
   labs(x = "Erstellungsdatum", y = "Anzahl")
+```
+```{r echo = FALSE}
 abbnr <- abbnr + 1
 caption <- paste0("Abb. ", abbnr, ": Nutzung des milet-Datenbankprojektes")
 ```
