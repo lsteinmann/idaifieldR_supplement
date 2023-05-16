@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Das Paket 'idaifieldR'
 
-idaifieldR importiert Daten aus der [iDAI.field 2 / Field Desktop](https://github.com/dainst/idai-field)-Datenbank in R. Die Kernfunktionen dieses Pakets verbinden sich mit einem laufenden iDAI.field-Client über dessen CouchDB-API und laden die gesamte Projektdatenbank oder eine Teilmenge als ein Listen-Objekt in R, wodurch der sonst notwendige csv-Export vermieden wird. Jedes R-Skript, das idaifieldR zum Importieren der Datenbank verwendet, kann erneut ausgeführt und flexibel mit neuen Daten aktualisiert werden, ohne dass ein Export aus dem Field-Client selbst erforderlich ist. Um idaifieldR verwenden zu können, muss Field Desktop auf dem selben Computer geöffnet oder über ein lokales Netzwerk erreichbar sein.
+[idaifieldR](https://lsteinmann.github.io/idaifieldR/) importiert Daten aus der [iDAI.field 2 / Field Desktop](https://github.com/dainst/idai-field)-Datenbank in R. Die Kernfunktionen dieses Pakets verbinden sich mit einem laufenden iDAI.field-Client über dessen CouchDB-API und laden die gesamte Projektdatenbank oder eine Teilmenge als ein Listen-Objekt in R, wodurch der sonst notwendige csv-Export vermieden wird. Jedes R-Skript, das idaifieldR zum Importieren der Datenbank verwendet, kann erneut ausgeführt und flexibel mit neuen Daten aktualisiert werden, ohne dass ein Export aus dem Field-Client selbst erforderlich ist. Um idaifieldR verwenden zu können, muss Field Desktop auf dem selben Computer geöffnet oder über ein lokales Netzwerk erreichbar sein.
 
 idaifieldR umfasst Funktionen zum Bereinigen und Formatieren der importierten Listenobjekte für eine einfachere Verarbeitung in R. Hiermit können die *UUID*s durch ihre entsprechenden Bezeichner ersetzt werden, die Geometrie kann so umformatiert werden, dass sie mit R-Paketen für räumliche Analysen, wie bspw. [sp](https://cran.r-project.org/web/packages/sp/index.html), verwendet werden kann, eine bevorzugte Sprache für mehrsprachige Eingabefelder kann ausgewählt werden, und vieles mehr. Die gleichzeitige Verarbeitung aller Ressourcen aus einem Datenbankprojekt kann bei größeren Projekten langsam und speicherintensiv sein, und wird nicht empfohlen.
 
@@ -46,11 +46,11 @@ library(idaifieldR)
 
 Um diesem Tutorial direkt mit denselben Daten zu folgen, können wir das Projekt-Backup namens "rtest.json" aus dem "data"-Ordner in diesem Supplement in ein neues Projekt namens 'rtest' in unserem Field Client laden. Hierzu klicken wir in Field Desktop im Menü unter "Projekt" auf "Backup einlesen...". Nach einem Klick auf das Ordner-Symbol navigieren wir zum Speicherort von "rtest.jsonl" aus diesem Supplement, und bestätigen die Datei mit "Öffnen". Als Projektkennung geben wir "rtest" ein. (**Achtung**: Nicht versehentlich ein bestehendes Projekt überschreiben!)
 
-Dieser Test-Datensatz verwendet eine sehr leicht angepasste Projektkonfiguration, um die relevanten Funktionen von `idaifieldR` zu demonstrieren. Da in dieser Anleitung kaum projektspezifische Begriffe und Felder verwendet werden, ist es auch leicht möglich, der Anleitung mit einem beliebigen anderen Datenbankprojekt zu folgen.
+Dieser Test-Datensatz verwendet eine sehr leicht angepasste Projektkonfiguration, um die relevanten Funktionen von `idaifieldR` zu demonstrieren. Da in dieser Anleitung kaum projektspezifische Begriffe und Felder verwendet werden, sollte es auch ohne Probleme möglich sein, der Anleitung mit einem beliebigen anderen Datenbankprojekt zu folgen. Gegebenenfalls müssen nur einzelne Begriffe ausgetauscht werden.
 
 ## Mit der Datenbank verbinden
 
-Unser erster Schritt besteht darin ein Verbindungsobjekt zu erstellen, mit dessen Hilfe die Funktionen von idaifieldR sich mit der Datenbank verbinden können:
+Unser erster Schritt besteht darin ein Verbindungsobjekt zu erstellen, das alle Informationen enthält, die die Funktionen von idaifieldR benötigen, um auf die Projektdatenbank zuzugreifen:
 
 ```{r connection}
 conn <- connect_idaifield(serverip = "127.0.0.1",
@@ -64,13 +64,15 @@ Die Verbindung wird hierbei bereits intern mit der Funktion `idf_ping()` geteste
 idf_projects(conn)
 ```
 
-Bis auf die Werte für `pwd` (das Passwort) und `project` (das Datenbankprojekt) sollten die Standardeinstellungen der Funktion üblicherweise ausreichen. Mehr Informationen zu anderen Einstellungen lassen sich mit einem Blick in die Dokumentation anzeigen:
+Bis auf die Werte für `pwd` (das Passwort) und `project` (das Datenbankprojekt) sollten die Standardeinstellungen der Funktion üblicherweise ausreichen. Mehr Informationen zu anderen Einstellungen lassen sich mit einem Blick in die [Online-Dokumentation](https://lsteinmann.github.io/idaifieldR/reference/index.html) finden, oder direkt in der integrierten Dokumentation anzeigen:
 
 ```{r eval = FALSE}
 ?connect_idaifield
 ?idf_projects
 ?idf_ping
 ```
+
+
 
 ## Index: Ein Überblick über die Datenbank
 
@@ -212,10 +214,10 @@ pottery_simple <- simplify_idaifield(pottery,
 ```
 
 -   Die Funktion weist uns darauf hin, dass englisch als Sprache in der Konfiguration nicht vorgesehen ist. Wenn das entsprechende Eingabefeld keinen englischen Wert hat, verwendet `simplify_idaifield()` alle Sprachen oder wenn vorhanden die nächste verfügbare Sprache (in alphabetischer Reihenfolge). Wenn wir alle Sprachen aus den mehrsprachigen Eingabefeldern behalten wollen, können wir `language = "all"` (die Standardeinstellung) verwenden.
--   Mit `keep_geometry = FALSE` werden alle Koordinateninformationen aus den Ressourcen entfernt. `keep_geometry = FALSE` behält die Geometrie-Angaben und formatiert sie so um, dass sie bspw. mit dem [sp](https://cran.r-project.org/web/packages/sp/index.html)-Paket verwendbar sind, um Karten darzustellen. Da alle Koordinaten in dreidimensionale Werte umformatiert werden (mit Höhe 0, falls keine angegeben worden ist), müssen hierfür die Höhenwerte ggf. wieder gelöscht werden.
--   `replace_uids` ist standardmäßig auf `TRUE` gesetzt und ersetzt *UUID*s in den Daten durch ihre entsprechenden Bezeichner (*identifier*), um sie besser lesbar zu machen. Gleichzeitig wird hierbei auch die *relation* *liesWithinLayer* ergänzt, die oben bereits erläutert wurde.
--   Mit `spread_fields = TRUE` werden Checkbox-Felder sowie das Kampagnenfeld automatisch auf mehrere Einträge verteilt, sodass sie (später) in mehreren Spalten in einer Matrix oder einem data.frame angezeigt werden. Dies funktioniert derzeit leider nur für Felder, die in dem neuen Projektkonfigurations-Editor bearbeitet wurden und somit in dem Konfigurations-Datensatz, den wir mit `get_configuration()` erreichen, vorhanden sind.
--   `use_exact_dates = TRUE` sorgt dafür, dass die Datierung für einen Datensatz auf das genaue Jahr festgelegt wird, sofern selbiger Datensatz eine Datierung enthält, die "exakt" ist. Andernfalls werden in *dating.min* und *dating.max* immer die Minimal- und Maximalwerte für einen Datensatz gespeichert. Die eigentlichen Eingaben können wir mit *dating.comment* nachvollziehen.
+-   Mit `keep_geometry = FALSE` werden alle Koordinateninformationen aus den Ressourcen entfernt. `keep_geometry = FALSE` behält die Geometrie-Angaben und formatiert sie so um, dass sie bspw. mit dem [sp](https://cran.r-project.org/web/packages/sp/index.html)-Paket verwendbar sind, um Karten darzustellen. Da alle Koordinaten in dreidimensionale Werte umformatiert werden (mit Höhe 0, falls keine angegeben worden ist), müssen hierfür die Höhenwerte ggf. wieder gelöscht werden (siehe `?reformat_geometry`).
+-   `replace_uids` (siehe `?replace_uid`) ist standardmäßig auf `TRUE` gesetzt und ersetzt *UUID*s in den Daten durch ihre entsprechenden Bezeichner (*identifier*), um sie besser lesbar zu machen. Gleichzeitig wird hierbei auch die *relation* *liesWithinLayer* ergänzt, die oben bereits erläutert wurde (siehe `?find_layer`).
+-   Mit `spread_fields = TRUE` werden Checkbox-Felder sowie das Kampagnenfeld automatisch auf mehrere Einträge verteilt, sodass sie (später) in mehreren Spalten in einer Matrix oder einem data.frame angezeigt werden. Dies funktioniert derzeit leider nur für Felder, die in dem neuen Projektkonfigurations-Editor bearbeitet wurden und somit in dem Konfigurations-Datensatz, den wir mit `get_configuration()` erreichen, vorhanden sind (siehe `?convert_to_onehot`).
+-   `use_exact_dates = TRUE` sorgt dafür, dass die Datierung für einen Datensatz auf das genaue Jahr festgelegt wird, sofern selbiger Datensatz eine Datierung enthält, die "exakt" ist. Andernfalls werden in *dating.min* und *dating.max* immer die Minimal- und Maximalwerte für einen Datensatz gespeichert. Die eigentlichen Eingaben können wir mit *dating.comment* nachvollziehen (siehe `?fix_dating`).
 
 **Wichtig:** Nur wenn wir die gesamte Datenbank mit dieser Funktion verarbeiten, brauchen wir den Index (`uidlist`) nicht angeben, da die Funktion ihren eigenen Index erzeugt. Wenn wir jedoch nur eine Teilmenge aller Daten verarbeiten wollen, sollten wir unbedingt einen Index der gesamten Datenbank angeben, da sonst die Übersetzung von *UUID* zu *identifier* nicht für alle *resources* funktioniert.
 
@@ -298,24 +300,24 @@ head(lang_lookup_de) %>%
 
 # Weitere Funktionen
 
-Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/releases) wurde mit den letzten Versionen erheblich erweitert. Alle Schritte aus `simplify_idaifield()` lassen sich bspw. auch manuell durchführen. Genauere Informationen dazu und zum Vorgang sind in der Dokumentation zu den einzelnen Funktionen enthalten. Abgesehen davon wurden folgende Funktionen in diesem Tutorial zwar nicht erwähnt, lassen sich aber über die Dokumentation erschließen:
+Die Dokumentation von [idaifieldR](https://github.com/lsteinmann/idaifieldR/releases) wurde mit den letzten Versionen erheblich erweitert. Alle Schritte aus `simplify_idaifield()` lassen sich bspw. auch manuell durchführen. Genauere Informationen dazu und zum Vorgang sind in der Dokumentation zu den einzelnen Funktionen sowie in deren [Online-Dokumentation](https://lsteinmann.github.io/idaifieldR/reference/index.html) enthalten. Abgesehen davon wurden folgende Funktionen in diesem Tutorial zwar nicht vorgestellt, lassen sich aber über die Dokumentation erschließen:
 
 ```{r eval = FALSE}
 ?idf_show_categories
+?get_uid_list
 ?get_configuration
 ?get_field_inputtypes
-?get_uid_list
+?convert_to_onehot
+?idf_sepdim
 ?remove_config_names
 ?replace_uid
-?idf_sepdim
 ?reformat_geometry
 ?gather_languages
 ?fix_dating
 ?find_layer
 ?fix_relations
-?convert_to_onehot
 ```
 
 # Call for Contributions
 
-idaifieldR kann Nutzer\*innen von Field Desktop helfen, ihre Daten auszuwerten. In Zukunft möchte ich das Paket ausgiebiger mit verschiedenen Projektkonfigurationen testen. Für die Weiterentwicklung ist jedoch dringend das Feedback von Nutzer\*innen nötig. Alle Interessierten sind herzlich eingeladen auf welche Weise Ihnen beliebt an der Entwicklung von idaifieldR mitzuwirken: sei es ein Hinweis auf Fehler, oder ein Wunsch nach neuen Funktionen, oder direkte Mitarbeit am Paket.
+idaifieldR kann Nutzer:innen von Field Desktop helfen, ihre Daten auszuwerten. In Zukunft möchte ich das Paket ausgiebiger mit verschiedenen Projektkonfigurationen testen. Für die Weiterentwicklung ist jedoch dringend das Feedback von Nutzer:innen nötig. Alle Interessierten sind herzlich eingeladen auf welche Weise Ihnen beliebt an der Entwicklung von idaifieldR mitzuwirken: sei es ein Hinweis auf Fehler, oder ein Wunsch nach neuen Funktionen, oder direkte Mitarbeit am Paket.

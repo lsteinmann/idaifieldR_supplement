@@ -1,8 +1,7 @@
 ---
-title: "R wie in: Reproduzierbar"
-subtitle: "Auswertung von Daten aus Field Desktop mit idaifieldR"
+title: 'R wie in: Reproduzierbar'
 author: "Lisa Steinmann"
-date: ", `r format(Sys.Date(), '%d. %B %Y')`"
+date: ', `r format(Sys.Date(), "%d. %B %Y")`'
 output:
   html_document:
     highlight: breezedark
@@ -20,8 +19,7 @@ output:
         style: Image Caption
     mapstyles:
       Normal: First Paragraph
-  pdf_document:
-    toc: yes
+subtitle: Auswertung von Daten aus Field Desktop mit idaifieldR
 bibliography: ../mat/references.bib
 csl: "../mat/deutsches-archaologisches-institut.csl"
 ---
@@ -48,15 +46,15 @@ PlotTheme <- theme(legend.justification=c(1,1),
 Field Desktop (oder: [iDAI.field](https://field.idai.world/)) ist der Dokumentations-Datenbankclient für Feldforschungsprojekte des DAI und findet auf zahlreichen Ausgrabungen inner- und außerhalb des DAI Anwendung[^1]. Der Client ermöglicht flexible Projektkonfigurationen bei einer in groben Zügen gleichbleibenden Datenstruktur, und ist damit für die unterschiedlichsten archäologischen Projekte geeignet. Der wahre Nutzen von Datenbanken besteht in den Möglichkeiten ihrer Auswertung. Die Stärke einer Datenbank ist es zwar auch, aber nicht nur, das traditionelle, individuelle Notizbuch in eine digitale und kollaborative Form zu überführen, sondern vor Allem Informationen über einzelne Objekte an einem Ort in einer strukturierten und quantitativ erfassbaren Art und Weise nach festgelegten Standards zu bündeln.
 
 
-[^1]: An dieser Stelle möchte ich dem Team der *Wissenschaftlichen Softwareentwicklung* des DAI, insbesondere Thomas Kleinke, Simon Hohl, Daniel de Oliveira und Juliane Watson, für die immer freundliche Kommunikation und den ausgezeichneten Support danken!
+[^1]: Ich nutze die Gelegenheit um dem Team der *Wissenschaftlichen Softwareentwicklung* des DAI, insbesondere Thomas Kleinke, Simon Hohl, Daniel de Oliveira und Juliane Watson, für die immer freundliche Kommunikation und den ausgezeichneten Support sowie ihren Einsatz bei der Entwicklung und Verbesserung von iDAI.field zu danken! Es ist schön zu sehen, dass auch Projekte außerhalb des DAI hier -- natürlich soweit möglich -- mit einbezogen werden. 
 
-Field Desktop erlaubt mit dem geordneten Export der Daten in csv-Tabellen bereits die vermutlich häufigste Form der Datenauswertung: Das Erstellen von Diagrammen aus Exporten in Tabellenverarbeitungsprogrammen und anderer statistischer Software, wie bspw. SPSS oder PAST. Ein zentraler Kritikpunkt an diesen Programmen ist jedoch ihr inhärenter Status als "black box" und damit einhergehend die Schwierigkeiten, mit ihnen hergestellte Graphiken oder Analysen zu reproduzieren, da ein großer Teil der Arbeit nach dem Export aus dem nur schwer dokumentierbaren Auswählen von Zeilen, Spalten und dem Klicken von Buttons besteht[^2]. Die Statistikprogrammiersprache R bietet die Lösung für dieses Problem, und ist bereits seit langer Zeit in vielen Wissenschaften, die regelmäßig mit statistisch auszuwertenden Daten hantieren, bekannt und beliebt.
+Field Desktop erlaubt mit dem geordneten Export der Daten in csv-Tabellen bereits die vermutlich häufigste Form der Datenauswertung: Das Erstellen von Diagrammen aus Exporten in Tabellenverarbeitungsprogrammen und anderer statistischer Software, wie bspw. [SPSS](https://de.wikipedia.org/wiki/SPSS) oder [PAST](https://past.en.lo4d.com/windows). Ein zentraler Kritikpunkt an diesen Programmen ist jedoch ihr inhärenter Status als "black box" und damit einhergehend die Schwierigkeiten, mit ihnen hergestellte Graphiken oder Analysen zu reproduzieren, da ein großer Teil der Arbeit nach dem Export aus dem nur schwer dokumentierbaren Auswählen von Zeilen, Spalten und dem Klicken von Buttons besteht[^2]. Die Statistikprogrammiersprache R bietet die Lösung für dieses Problem, und ist bereits seit langer Zeit in vielen Wissenschaften, die regelmäßig mit statistisch auszuwertenden Daten hantieren, bekannt und beliebt.
 
 [^2]: [@marwickHowComputersBroke2015]
 
 # R wie in: Reproduzierbar
 
-R ist eine Skriptsprache, und lässt sich in einem geeigneten Programm Zeile für Zeile ausführen. Die Arbeit mit R lässt sich dadurch sehr interaktiv gestalten: Wie bei einem Klick in Excel ist bei Bedarf das Ergebnis jeder einzelnen Zeile sofort sichtbar. Dabei garantiert die Verschriftlichung der einzelnen Arbeitsschritte, dass der Weg zum Ergebnis jederzeit nachvollziehbar und vor allem auch beim Hinzufügen neuer Daten sicher und schnell reproduziert werden kann. Für die Verwendung von R in allen archäologischen Disziplinen gibt es zahlreiche Beispiele: David Carlsons "Quantitative Methods in Archaeology Using R" (2017)[^3] integriert zu Beginn eine grundlegende Einführung in R.
+R ist eine Skriptsprache, und lässt sich in einem geeigneten Programm Zeile für Zeile ausführen. Die Arbeit mit R lässt sich dadurch sehr interaktiv gestalten: Wie bei einem Klick in Excel ist bei Bedarf das Ergebnis jeder einzelnen Zeile sofort sichtbar. Damit ist R auch für Anwender:innen ohne Programmiererfahrung gut geeignet. Die Verschriftlichung der einzelnen Arbeitsschritte garantiert, dass der Weg zum Ergebnis jederzeit nachvollziehbar und vor allem auch beim Hinzufügen neuer Daten sicher und schnell reproduziert werden kann. Für die Verwendung von R in allen archäologischen Disziplinen gibt es zahlreiche Beispiele: David Carlsons "Quantitative Methods in Archaeology Using R" (2017)[^3] integriert zu Beginn eine grundlegende Einführung in R.
 
 [^3]: [@carlsonQuantitativeMethodsArchaeology2017]
 
@@ -70,11 +68,11 @@ Es ist nicht überraschend, dass die meisten Hilfestellungen und Projekte nicht 
 
 [^7]: <https://isaakiel.github.io/>
 
-Als ein Hub für archäologische Projekte und Publikationen, in denen die Verwendung von R eine große Rolle spielt, agiert die auf der CAA 2018 gegründeten special interest group "[Scientific Scripting Languages in Archaeology](https://sslarch.github.io/)"[^8]. Die Publikationen der Mitglieder zeichnen sich durch die Beigabe von Supplementen in Form von Datentabellen, Code-Repositorien oder Erläuterungen aus, wie beispielhaft -- aber keineswegs ausschließlich -- an einigen Beiträgen und GitHub[^9]-Profilen sichtbar wird[^10].
+Als ein Hub für archäologische Projekte und Publikationen, in denen die Verwendung von R eine große Rolle spielt, agiert die auf der CAA 2018 gegründeten *special interest group* "[Scientific Scripting Languages in Archaeology](https://sslarch.github.io/)"[^8]. Die Publikationen der Mitglieder zeichnen sich durch die Beigabe von Supplementen in Form von Datentabellen, Code-Repositorien oder Erläuterungen aus, wie beispielhaft -- aber keineswegs ausschließlich -- an einigen Beiträgen und GitHub[^9]-Profilen sichtbar wird[^10].
 
 [^8]: <https://sslarch.github.io/>
 
-[^9]: Die Online-Plattform GitHub ist ein weiteres Rad im Getriebe der Reproduzierbarkeit. Obwohl ursprünglich als Versionsverwaltung für Software entstanden, eignen sich git und GitHub als Schnittstelle für kollaborative Projekte sowohl in der Bereitstellung von Daten, als auch der Entwicklung von Tools. Viele Autor\*innen sind dazu übergegangen die Daten und Auswertungsskripte ihrer Artikel oder Projekte auf GitHub oder in Forschungsdatenrepositorien zur Verfügung zu stellen.
+[^9]: Die Online-Plattform GitHub ist ein weiteres Rad im Getriebe der Reproduzierbarkeit. Obwohl ursprünglich als Versionsverwaltung für Software entstanden, eignen sich git und GitHub als Schnittstelle für kollaborative Projekte sowohl in der Bereitstellung von Daten, als auch der Entwicklung von Tools. Viele Autor:innen sind dazu übergegangen die Daten und Auswertungsskripte ihrer Artikel oder Projekte auf GitHub oder in Forschungsdatenrepositorien zur Verfügung zu stellen.
 
 [^10]: Siehe bspw.: [@schmidEstimatingHumanMobility2023] (<https://github.com/nevrome>) und [@hinzSensitivityRadiocarbonSum2020] (<https://github.com/MartinHinz>).
 
@@ -88,14 +86,14 @@ Die Verwendung von Daten aus Field Desktop / iDAI.field in R ist mit dem Export 
 
 # idaifieldR!
 
-Das Ziel von idaifieldR ist es, diesen Schritt zu eliminieren und eine flexiblere und dynamischere Auswertung der Datenbank zu ermöglichen. Mit nur wenigen Zeilen lässt sich die gesamte Datenbank oder eine gezielte Auswahl mit idaifieldR in R importieren.
+Das Ziel von [idaifieldR](https://lsteinmann.github.io/idaifieldR/) ist es, diesen Schritt zu eliminieren und eine flexiblere und dynamischere Auswertung der Projektdatenbanken zu ermöglichen. Mit nur wenigen Zeilen lässt sich eine vollständige Datenbank oder eine gezielte Auswahl mit idaifieldR nach R importieren.
 
 
-idaifieldR greift dafür auf den CouchDB-Server, den Field Desktop im Hintergrund verwendet, zu. Der direkte Import aus der Datenbank bringt jedoch einige Probleme mit sich: Die Daten -- ursprünglich im JSON-Format, das vielen sicher aus der Verwaltung der Projektkonfigurationen bis zur dritten Version von iDAI.field bekannt ist[^11] -- werden als sog. Liste nach R importiert. Neben dem Import enthält idaifieldR Funktionen, mit denen sich die Daten etwas formatieren und bereinigen lassen, um die Weiterarbeit mit R zu vereinfachen.
+idaifieldR greift dafür auf den CouchDB/PouchDB-Server, den Field Desktop im Hintergrund verwendet, zu. Der direkte Import aus der Datenbank bringt jedoch einige Probleme mit sich: Die Daten -- ursprünglich im JSON-Format, das vielen sicher aus der Verwaltung der Projektkonfigurationen bis zur dritten Version von iDAI.field bekannt ist[^11] -- werden als sog. Liste nach R importiert. Listen in R können stark verschachtelt werden, und der Umgang mit ihnen ist nicht immer intuitiv verständlich. Deswegen bietet idaifieldR neben dem Import Funktionen, mit denen sich die Daten etwas formatieren und bereinigen lassen, wodurch die Weiterarbeit mit R vereinfacht wird.
 
 [^11]: Zur Erläuterung des Aufbaus der Projektkonfigurationen siehe bspw. in dieser Zeitschrift: [@hamelVomFeldDatenbank2022]
 
-Im Folgenden soll der Workflow mit idaifieldR kurz anhand einiger weniger Beispiele aus [Milet](https://gazetteer.dainst.org/place/2287722) veranschaulicht werden[^12]. Für die Demonstration wird idaifieldR in der Version 0.3.2 verwendet, die [auf GitHub erhältlich](https://github.com/lsteinmann/idaifieldR) ist. Leser\*innen, die bisher noch keine Erfahrung mit R haben, wird empfohlen zunächst R und RStudio zu installieren und sich einige Grundlagen der Sprache anzueignen. Als Hilfestellung sind bspw. die [Screencasts von ISAAKiel](https://isaakiel.github.io/screencasts.html)[^13] oder das Buch „[YaRrr! The Pirate's Guide to R](https://bookdown.org/ndphillips/YaRrr/)"[^14] empfehlenswert. Im Supplement zu diesem Artikel befindet sich neben dem Artikel selbst eine detaillierte Einführung zu idaifieldR, die auch die Installation des Paketes und viele der verfügbaren Funktionen und ihrer Optionen abdeckt.
+Im Folgenden soll der Workflow mit idaifieldR kurz anhand einiger weniger Beispiele aus [Milet](https://gazetteer.dainst.org/place/2287722) veranschaulicht werden[^12]. Für die Demonstration wird idaifieldR in der Version 0.3.2 verwendet, die [auf GitHub erhältlich](https://github.com/lsteinmann/idaifieldR) ist. Leser:innen, die bisher noch keine Erfahrung mit R haben, wird empfohlen zunächst [R](https://cran.r-project.org/) und [RStudio](https://posit.co/download/rstudio-desktop/) zu installieren und sich einige Grundlagen der Sprache anzueignen. Als Hilfestellung sind bspw. die [Screencasts von ISAAKiel](https://isaakiel.github.io/screencasts.html)[^13] oder das Buch „[YaRrr! The Pirate's Guide to R](https://bookdown.org/ndphillips/YaRrr/)"[^14] empfehlenswert. Im Supplement zu diesem Artikel befindet sich neben dem Artikel selbst eine detailliertere Einführung zu idaifieldR, die auch die Installation des Paketes und viele der verfügbaren Funktionen und ihrer Optionen abdeckt.
 
 [^12]: iDAI.field wird seit 2021 von der Miletgrabung verwendet. Informationen zu Nutzung des Datenbankclients im Rahmen der Miletgrabung finden sich in [@steinmann_MiletusDocumentationManual_2023]. Weitere Informationen Milet und den dort laufenden Projekten unter: <https://www.miletgrabung.uni-hamburg.de/>
 
@@ -122,7 +120,7 @@ Eine *resource* ist ein einzelner Datensatz. Jedes ausgefüllte Formular wird al
 ![Abb. 2: Ansicht der Schnitte im "Ort" MK_Michaelskirche in Field Desktop](../figures/Abb_2_Screenshot_Field_MK.png)
 
 
-Als nächstes importieren wir alle Datensätze aus dem Areal der [Michaelskirche](https://arachne.dainst.org/entity/6525406) aus dem milesischen Datenbankprojekt. In der Struktur der unserer Field-Datenbank benutzen wir die Resource "Ort" als Behältnis für zusammengehörige Schnitte, weswegen wir unseren *query* entsprechend gestalten können:
+Als nächstes importieren wir alle Datensätze aus dem Areal der [Michaelskirche](https://arachne.dainst.org/entity/6525406) aus dem milesischen Datenbankprojekt (Abb. 2). In der Struktur der Field-Datenbank für Milet benutzen wir die Resource "Ort" als Behältnis für zusammengehörige Schnitte, weswegen wir unseren *query* entsprechend gestalten können:
 
 ```{r }
 mk_raw <- idf_index_query(conn, uidlist = index,
@@ -143,9 +141,9 @@ mk <- mk_raw %>%
 
 Genauere Informationen zu diesem Prozess sind in der Dokumentation sowie in dem Tutorial im Supplement enthalten. Im Grunde endet hiermit die Arbeit von *idaifieldR*. Das Paket dient dazu, die Daten aus Field Desktop nach R zu importieren und aufzubereiten. An den folgenden Beispielen sollen lediglich einige sehr grundlegende Möglichkeiten der Datenauswertung gezeigt werden.
 
-## Das Areal "Michaelskirche"
+## Das Grabungsareal "Michaelskirche" in Milet
 
-Im Ort "MK_Michaelskirche" sind alle Schnitte enthalten, die im Areal der [Michaelskirche](https://arachne.dainst.org/entity/6525406) bzw. des [Dionysostempels](https://arachne.dainst.org/entity/6349) angelegt wurden. Hier wurde erstmals unter Theodor Wiegand am Beginn des 20. Jh. gearbeitet. Die Funde in der Datenbank stammen jedoch aus den Grabungen von Wolfgang Müller-Wiener, die er 1973--1977 durchgeführt hat[^16]. Sie wurden zwischen 2017 und 2020 von der Verfasserin dieses Artikels im Rahmen ihrer Dissertation aufgenommen[^17].
+Im Ort "MK_Michaelskirche" sind alle Schnitte enthalten, die im Bereich der [Michaelskirche](https://arachne.dainst.org/entity/6525406) bzw. des [Dionysostempels](https://arachne.dainst.org/entity/6349) in [Milet](https://gazetteer.dainst.org/place/2287722) angelegt wurden (Abb. 2). Hier wurde erstmals unter Theodor Wiegand am Beginn des 20. Jh. gearbeitet. Die Funde in der Datenbank stammen jedoch aus den Grabungen von Wolfgang Müller-Wiener zwischen 1973 und 1977[^16]. Sie wurden von 2017 bis 2020 von der Verfasserin dieses Artikels im Rahmen ihrer Dissertation aufgenommen[^17].
 
 [^16]: [@muller-wiener_Milet1977Arbeiten_1979]
 
@@ -178,9 +176,11 @@ p
 
 ```
 
+Das Ergebnis dieser Zeilen ist das Balkendiagramm in Abb. `r abbnr`.
+
 ## Keramik aus dem Areal der Michaelskirche
 
-Schauen wir uns also im folgenden an, welche Art von Keramik im Areal der Michaelskirche angetroffen wurde. Hierfür filtern wir den gesamten Datenbestand aus dem Areal der Michaelskirche nach der Kategorie (*category*) "Keramik" (*Pottery*) und lassen ein Balkendiagramm anzeigen, das uns die Keramikklasse (*potteryGroup*) auf der x-Achse und die Anzahl von Datensätzen auf der y-Achse darstellt. Die Farbe symbolisiert dabei die eingetragene Funktionskategorie (*functionalCategory*) eines jeden Keramik-Objektes.
+Schauen wir uns also im Folgenden an, welche Art von Keramik im Areal der Michaelskirche angetroffen wurde. Hierfür filtern wir den gesamten Datenbestand aus dem Areal der Michaelskirche nach der Kategorie (*category*) "Keramik" (*Pottery*) und lassen ein Balkendiagramm anzeigen, das uns die Keramikklasse (*potteryGroup*) auf der x-Achse und die Anzahl von Datensätzen auf der y-Achse darstellt. Die Farbe symbolisiert dabei die eingetragene Funktionskategorie (*functionalCategory*) eines jeden Keramik-Objektes.
 
 ```{r }
 p <- mk %>%
@@ -208,7 +208,7 @@ ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".png"))
 p
 ```
 
-Neben [Schwarzfirniskeramik](http://thesauri.dainst.org/de/concepts/_1b2c82c9.html), die einen auffällig großen Teil des gesamten Spektrums ausmacht, sehen wir eine eher geringe Menge von [schwarz](http://thesauri.dainst.org/de/concepts/_11bdebc6.html)- und [rotfiguriger](http://thesauri.dainst.org/de/concepts/_d1e3c38b.html) Keramik. Die beiden Gattungen wurden bereits 2016 von [Norbert Kunisch vollständig veröffentlicht](https://zenon.dainst.org/Record/001471948), und die Datensätze geben seine Einschätzungen zu diesen Objekten wider[^18]. Da von ihm publizierte Objekte im Datensatz entsprechend markiert wurden, können wir den Datenbestand schnell dahingehend filtern und uns ein Diagramm der einzelnen Datierungsspannen ausgeben lassen:
+In dem aus diesen Zeilen resultierenden Balkendiagramm in Abb. `r abbnr` sehen wir neben [Schwarzfirniskeramik](http://thesauri.dainst.org/de/concepts/_1b2c82c9.html), die einen auffällig großen Teil des gesamten Spektrums ausmacht, eine eher geringe Menge von [schwarz](http://thesauri.dainst.org/de/concepts/_11bdebc6.html)- und [rotfiguriger](http://thesauri.dainst.org/de/concepts/_d1e3c38b.html) Keramik. Die beiden Gattungen wurden bereits 2016 von [Norbert Kunisch vollständig veröffentlicht](https://zenon.dainst.org/Record/001471948), und die Datensätze geben seine Einschätzungen zu diesen Objekten wider[^18]. Da von ihm publizierte Objekte im Datensatz entsprechend markiert wurden, können wir den Datenbestand schnell dahingehend filtern und uns ein Diagramm der einzelnen Datierungsspannen (Abb. `r abbnr+1`) ausgeben lassen:
 
 [^18]: [@kunischFundeAusMilet2016]
 
@@ -242,9 +242,9 @@ ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".png"))
 p
 ```
 
-Es lässt sich schnell beobachten, dass unter den wenigen Fragmenten schwarz- und rotfiguriger Keramik im Areal der Michaelskirche ein Großteil in das 5. Jahrhundert v. Chr. datiert wurde. Sollten in Zukunft neue Fragmente hinzukommen, oder sich die Datierung ändern, ließe sich dieses Diagramm zusammen mit dem gesamten Bericht auf Knopfdruck aus den Daten in Field Desktop neu generieren.
+In Abb. `r abbnr` lässt sich schnell beobachten, dass unter den wenigen Fragmenten schwarz- und rotfiguriger Keramik im Areal der Michaelskirche ein Großteil in das 5. Jahrhundert v. Chr. datiert wurde. Sollten in Zukunft neue Fragmente hinzukommen, oder sich die Datierung ändern, ließe sich dieses Diagramm zusammen mit dem gesamten Bericht auf Knopfdruck aus den Daten in Field Desktop neu generieren.
 
-Bei Bedarf kann der gesamte Datensatz oder eine Auswahl bspw. als csv-Tabelle oder in anderen Formaten gespeichert zur Verfügung gestellt werden:
+Bei Bedarf kann der gesamte Datensatz oder eine Auswahl bspw. als csv-Tabelle oder in anderen Formaten gespeichert und zur Verfügung gestellt werden:
 
 ```{r }
 mk %>%
@@ -261,7 +261,7 @@ Die Datei enthält aus allen Datensätzen innerhalb des Ortes "MK_Michaelskirche
 
 ## Metadaten
 
-Durch den direkten Zugriff auf die Datenbank haben wir gleichzeitig die Möglichkeit, zu sehen, wer wann an unseren Datensätzen gearbeitet hat. Diese Information lässt sich für jeden einzelnen Datensatz abrufen. Mit der `get_idaifield_docs()`-Funktion können wir alle Datensätze aus der Datenbank importieren. Durch das ausblenden der Legende wird in diesem Fall die Darstellung der Namen aller einzelnen Nutzer\*innen vermieden.
+Durch den direkten Zugriff auf die Datenbank haben wir gleichzeitig die Möglichkeit, zu sehen, wer wann an unseren Datensätzen gearbeitet hat. Diese Information lässt sich für jeden einzelnen Datensatz abrufen. Mit der `get_idaifield_docs()`-Funktion können wir alle Datensätze aus der Datenbank importieren. Eine Legende wird in diesem Fall (Abb. `r abbnr+1`) absichtlich unterschlagen, um nicht die Namen aller einzelnen Nutzer:innen anzuzeigen. Eine Farbe repräsentiert eine Nutzer:in.
 
 ```{r}
 mil <- get_idaifield_docs(conn)
@@ -283,19 +283,18 @@ p <- p + scale_fill_viridis_d() +
   theme(panel.grid.major.y = gridline("gray70"),
         panel.grid.minor.y = gridline("gray90")) + 
   PlotTheme + theme(legend.position = "none")
-abbnr <- abbnr + 1
 title_s <- "Nutzung_milet_db"
 ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".eps"))
 ggsave(file = paste0("../figures/Abb_", abbnr, "_", title_s, ".png"))
 p
 ```
 
-Wie zu erwarten werden die meisten Datensätze während der Grabungssaison in den Sommermonaten angelegt. Auf diesem Level scheint es wie Spielerei, aber der Zugriff auf Metadaten kann beim Lösen von Fragen und Problemen, sowie für Arbeitsberichte durchaus hilfreich sein. So lässt sich auch schnell und ohne Aufwand zusammenfassen, wie viele und welche Arten von Funden im Zeitraum einer Grabungskampagne aufgenommen worden sind.
+Wie zu erwarten zeigt das mit diesem Code produzierte Diagramm (Abb. `r abbnr`), dass die meisten Datensätze während der Grabungssaison in den Sommermonaten angelegt werden. Auf diesem Level scheint es wie Spielerei, aber der Zugriff auf Metadaten kann beim Lösen von Fragen und Problemen, sowie für Arbeitsberichte durchaus hilfreich sein. So lässt sich auch schnell und ohne Aufwand zusammenfassen, wie viele und welche Arten von Funden im Zeitraum einer Grabungskampagne aufgenommen worden sind.
 
 # Potenzial und Weiterentwicklung
 
-Die hier gezeigten Beispiele dienen lediglich als Demonstration, wie schnell sich Ergebnisse aus der Datenbank visualisieren lassen. Mit R und idaifieldR lässt sich das gesamte Potenzial der Projektdatenbanken in iDAI.field ausnutzen. Mit nur wenigen Zeilen Code können die Datensätze importiert, formatiert und visualisiert werden. Mit R ist es möglich, eine Vielzahl von Analysen, die sich besser in Werken zu statistischer Auswertung in der Archäologie unterbringen lassen, als an dieser Stelle, durchzuführen. Darüber hinaus ist R ein mächtiges Werkzeug zum Ausbessern und Bereinigen von unsystematischen Daten. idaifieldR öffnet die Tür für die flexible, quantitative Auswertung und Pflege der Datenbank, sowie für die Publikation ausgewählter Datenbestände.
+Die hier gezeigten Beispiele dienen lediglich als Demonstration, wie schnell sich Ergebnisse aus der Datenbank visualisieren lassen. Mit R und idaifieldR lässt sich das gesamte Potenzial der Projektdatenbanken in iDAI.field ausnutzen. Mit nur wenigen Zeilen Code können die Datensätze importiert, formatiert und visualisiert werden. Mit R ist es möglich, eine Vielzahl von Analysen durchzuführen, die sich jedoch besser in Werken zu statistischer Auswertung in der Archäologie unterbringen lassen, als an dieser Stelle. Darüber hinaus ist R ein mächtiges Werkzeug zum Ausbessern und Bereinigen von unsystematischen Daten. idaifieldR öffnet die Tür für die flexible, quantitative Auswertung und Pflege der Datenbank, sowie für die Publikation ausgewählter Datenbestände.
 
-Bisher wird idaifieldR von der Verfasserin alleine entwickelt und mit dem *milet*-Datenbankprojekt verwendet. Doch um das volle Potenzial von idaifieldR auszuschöpfen und es als nützliches Tool für den Import von Daten aus Field Desktop zu etablieren, ist die Unterstützung und Zusammenarbeit von Interessierten unerlässlich. Wenn sich über diese Plattform Nutzer\*innen finden sollten, die das Paket auch mit anderen Projektkonfigurationen nutzen und testen wollen, wäre das ein großer Gewinn. Erfahrungen und Rückmeldungen von Kolleg\*innen sind für die Weiterentwicklung an diesem Punkt entscheidend. Interessierte sind jederzeit herzlich willkommen über [GitHub](https://github.com/lsteinmann/idaifieldR) an dem Projekt teilzuhaben, oder auch Probleme aufzuzeigen. Nach einer ausgiebigen Testphase, die mit diesem Artikel hoffentlich angestoßen wird, ist das Ziel, das Paket in CRAN, dem offiziellen Repositorium von R, zu veröffentlichen.
+Bisher wird idaifieldR von der Verfasserin alleine entwickelt und mit dem *milet*-Datenbankprojekt verwendet. Aber um das volle Potenzial auszuschöpfen und das Paket wirklich als nützliches Tool für den Import von Daten aus Field Desktop zu etablieren, ist die Unterstützung und Zusammenarbeit von Interessierten unerlässlich. Wenn sich über diese Plattform Nutzer:innen finden sollten, die das Paket auch mit anderen Projektkonfigurationen nutzen und testen wollen, wäre das ein großer Gewinn. Erfahrungen und Rückmeldungen von Kolleg:innen sind für die Weiterentwicklung an diesem Punkt entscheidend. Interessierte sind jederzeit herzlich willkommen über [GitHub](https://github.com/lsteinmann/idaifieldR) an dem Projekt teilzuhaben, oder auch Probleme aufzuzeigen.
 
 # Literatur
