@@ -1,7 +1,7 @@
 
 # idaifieldR: Supplement
 
-Supplement (und Text) zum Artikel: "R wie in: Reproduzierbar -- Auswertung von Daten aus Field Desktop mit idaifieldR". Siehe auch [selbes dataset auf iDAI.repo](https://repo.dainst.org/dataset/digitales-supplement-zu-r-wie-in-reproduzierbar).
+Supplement (und Text) zum Artikel: "[R wie in: Reproduzierbar -- Auswertung von Daten aus Field Desktop mit idaifieldR](https://doi.org/10.34780/068b-q6c7)". Siehe auch [selbes dataset auf iDAI.repo](https://repo.dainst.org/dataset/digitales-supplement-zu-r-wie-in-reproduzierbar).
 
 ```
 @article{Steinmann2023,
